@@ -1,6 +1,5 @@
 "use client";
 import apiKey from "@/app/API";
-import { Suspense } from 'react';
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import React, { Suspense, useCallback, useEffect, useState } from "react";
