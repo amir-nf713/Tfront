@@ -1,4 +1,4 @@
-const Url = 'http://localhost:3001/api/tadrisyar';
+const Url = 'http://185.243.48.159:3001/api/tadrisyar';
  
 const apiKey = ({
   sendsms : `${Url}/sendsms`, // /:num
