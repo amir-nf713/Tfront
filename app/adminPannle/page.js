@@ -57,7 +57,7 @@ export default function AdminPage() {
         <Link href={"/adminPannle/ticket"} className="py-2.5 text-xl text-sky-500 font-bold border border-sky-500 w-[97%] flex justify-center items-center gap-2.5 rounded-full">ticket</Link>
         <Link href={"/adminPannle/videos"} className="py-2.5 text-xl text-sky-500 font-bold border border-sky-500 w-[97%] flex justify-center items-center gap-2.5 rounded-full">video</Link>
         <Link href={"/adminPannle/cashWithdrawal"} className="py-2.5 text-xl text-sky-500 font-bold border border-sky-500 w-[97%] flex justify-center items-center gap-2.5 rounded-full">cash withdrawal</Link>
-        <Link href={"/"} className="py-2.5 text-xl text-sky-500 font-bold border border-sky-500 w-[97%] flex justify-center items-center gap-2.5 rounded-full">authentication</Link>
+        <Link href={"/adminPannle/authentication"} className="py-2.5 text-xl text-sky-500 font-bold border border-sky-500 w-[97%] flex justify-center items-center gap-2.5 rounded-full">authentication</Link>
         
       </div>
     </div>
