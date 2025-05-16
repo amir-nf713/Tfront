@@ -7,13 +7,14 @@ import { useEffect } from "react";
 import Cookies from "js-cookie";
 
 export default function page() {
+  const router = useRouter();
   const getCookie = useCallback((name) => {
     return Cookies.get(name) || null;
   }, []);
 
   const login = getCookie("login");
   if (login) {
-    window.location.href = "/userPannle"; // یا آدرس مورد نظر
+    router.push("/userPannle");
   }
 
   const [codeBox, setCodeBox] = useState("hidden");
@@ -23,7 +24,7 @@ export default function page() {
   const [err, seterr] = useState("");
   const [loading, setloading] = useState(true);
 
-  const router = useRouter();
+  
 
   function setLoginCookie(userId) {
     const days = 5;

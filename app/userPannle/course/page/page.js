@@ -1,13 +1,14 @@
 "use client";
 import apiKey from "@/app/API";
+import { Suspense } from 'react';
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Star, Users } from "lucide-react";
 import Cookies from "js-cookie";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 
-export default function page() {
+function page() {
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggleVideo = (index) => {
@@ -144,5 +145,14 @@ export default function page() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+export default function Page() {
+  return (
+    <Suspense fallback={<div>در حال بارگذاری...</div>}>
+      <TicketChatPage />
+    </Suspense>
   );
 }
