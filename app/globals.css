@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+	--breakpoint-desktop-3xl : 1920px;
+	--breakpoint-offer-wrap : 1890px;
+	--breakpoint-desktop-2xl : 1610px;
+	--breakpoint-desktop-xl : 1450px;
+	--breakpoint-desktop-l : 1376px;
+	--breakpoint-desktop-s : 1290px;
+	--breakpoint-laptop-xl : 1034px; 
+	--breakpoint-laptop-l : 965px;
+	--breakpoint-tablet-xl : 810px;
+	--breakpoint-tablet-l : 774px;
+	--breakpoint-Wide-mobile-4xl : 645px;
+	--breakpoint-Wide-mobile-3xl : 605px;
+	--breakpoint-Wide-mobile-2xl : 573px;
+	--breakpoint-Wide-mobile-xl : 545px ;
+	--breakpoint-Wide-mobile-l : 539px;
+	--breakpoint-Wide-mobile-s : 485px;
+	--breakpoint-mobile-xl : 365px;
+	--breakpoint-mobile-xlk : 381px;
+	--breakpoint-mobile-l : 325px;
+	--breakpoint-mobile-s : 245px;
+	--font-dorna: "Dorna"
+}
+
+
+
+.input {
+	@apply px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-400;
+  }
+  
+body{
+	background-color: rgb(246, 246, 246);
+}
+@font-face {
+	font-family: Doran;
+	font-style: normal;
+	font-weight: 100;
+	src: url('./Fonts/woff/Doran-Thin.woff') format('woff'),   
+	url('./Fonts/woff2/Doran-Thin.woff2') format('woff2');		
+}
+
+@font-face {
+	font-family: Doran;
+	font-style: normal;
+	font-weight: 300;
+	src: url('./Fonts/woff/Doran-Light.woff') format('woff'),   
+	url('./Fonts/woff2/Doran-Light.woff2') format('woff2');	
+}
+
+@font-face {
+	font-family: Doran;
+	font-style: normal;
+	font-weight: normal;
+	src: url('./Fonts/woff/Doran-Regular.woff') format('woff'),   
+	url('./Fonts/woff2/Doran-Regular.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: Doran;
+	font-style: normal;
+	font-weight: 500;
+	src: url('./Fonts/woff/Doran-Medium.woff') format('woff'),   
+	url('./Fonts/woff2/Doran-Medium.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: Doran;
+	font-style: normal;
+	font-weight: bold;
+	src: url('./Fonts/woff/Doran-Bold.woff') format('woff'),   
+	url('./Fonts/woff2/Doran-Bold.woff2') format('woff2');		 
+}
+
+@font-face {
+	font-family: Doran;
+	font-style: normal;
+	font-weight: 800;
+	src: url('./Fonts/woff/Doran-ExtraBold.woff') format('woff'),   
+	url('./Fonts/woff2/Doran-ExtraBold.woff2') format('woff2');	 
+}
+
+* {
+   direction: rtl;
+}
+
+.ltr {
+   direction: ltr;
+}
