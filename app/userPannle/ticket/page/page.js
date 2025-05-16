@@ -1,11 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
 import apiKey from "@/app/API";
 
-export default function TicketChatPage() {
+ function TicketChatPage() {
   const searchParams = useSearchParams();
   const ticketId = searchParams.get("id");
 
@@ -86,5 +86,14 @@ export default function TicketChatPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+
+export default function Pdage() {
+  return (
+    <Suspense fallback={<div>در حال بارگذاری...</div>}>
+      <TicketChatPage />
+    </Suspense>
   );
 }
