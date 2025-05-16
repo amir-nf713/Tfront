@@ -148,7 +148,7 @@ function Page() {
 }
 
 
-export default function Page() {
+export default function Pdage() {
   return (
     <Suspense fallback={<div>در حال بارگذاری...</div>}>
       <Page />
