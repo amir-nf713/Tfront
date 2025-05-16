@@ -7,7 +7,7 @@ import { Star, Users } from "lucide-react";
 import Cookies from "js-cookie";
 import { MdKeyboardArrowLeft } from "react-icons/md";
 
-function page() {
+function Page() {
   const [openIndex, setOpenIndex] = useState(null);
 
   const toggleVideo = (index) => {
@@ -151,7 +151,7 @@ function page() {
 export default function Page() {
   return (
     <Suspense fallback={<div>در حال بارگذاری...</div>}>
-      <TicketChatPage />
+      <Page />
     </Suspense>
   );
 }
