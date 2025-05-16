@@ -1,184 +1,189 @@
-'use client'
-import axios from 'axios'
-import React, { useCallback, useState } from 'react'
-import apiKey from './API'
-import { useRouter } from 'next/navigation'
- import { useEffect } from "react";
-import Cookies from 'js-cookie'
-
+"use client";
+import axios from "axios";
+import React, { useCallback, useState } from "react";
+import apiKey from "./API";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Cookies from "js-cookie";
 
 export default function page() {
+  const getCookie = useCallback((name) => {
+    return Cookies.get(name) || null;
+  }, []);
 
- 
-  
+  const login = getCookie("login");
+  if (login) {
+    window.location.href = "/userPannle"; // یا آدرس مورد نظر
+  }
 
-  
-    const getCookie = useCallback((name) => {
-      return Cookies.get(name) || null;
-    }, []);
+  const [codeBox, setCodeBox] = useState("hidden");
+  const [NumBox, setNumBox] = useState("flex");
+  const [numinp, setnuminp] = useState("");
+  const [codeinp, setcodeinp] = useState("");
+  const [err, seterr] = useState("");
+  const [loading, setloading] = useState(true);
 
-    const login = getCookie("login");
-    if (login) {
-      window.location.href = "/userPannle"; // یا آدرس مورد نظر
-    }
-  
+  const router = useRouter();
 
-
-
-
-
-  const [codeBox, setCodeBox] = useState("hidden")
-  const [NumBox, setNumBox] = useState("flex")
-  const [numinp, setnuminp] = useState("")
-  const [codeinp, setcodeinp] = useState("")
-  const [err, seterr] = useState("")
-  const [loading, setloading] = useState(true)
-  
-  const router = useRouter()
-
-function setLoginCookie(userId) {
-      const days = 5;
-      const date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-      const expires = "expires=" + date.toUTCString();
-      document.cookie = `login=${userId}; ${expires}; path=/`;
-    }
+  function setLoginCookie(userId) {
+    const days = 5;
+    const date = new Date();
+    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = `login=${userId}; ${expires}; path=/`;
+  }
 
   const buttonhandler = () => {
-    
-    
-    
-    
-    
-    
+    setloading(true);
+    if (numinp === "9216069032") {
+      router.push("adminPannle");
+    } else {
+      axios
+        .post(`${apiKey.sendsms}/+98${numinp}`)
+        .then((data) => {
+          console.log(data);
 
-  setloading(true)
-  if(numinp === "9216069032") {
-    router.push("adminPannle")
-  }else{
-
-    axios.post(`${apiKey.sendsms}/+98${numinp}`)
-    .then(data => {
-      console.log(data);
-      
-      if (data.data.massege === "ok") {
-        if (codeBox === "hidden") {
-          setCodeBox("flex")
-          setNumBox("hidden")
-          setloading(false)
-          
-        }
-      }
-    })
-    .catch((errr) => {})
-  }
-
-  
-
-  }
+          if (data.data.massege === "ok") {
+            if (codeBox === "hidden") {
+              setCodeBox("flex");
+              setNumBox("hidden");
+              setloading(false);
+            }
+          }
+        })
+        .catch((errr) => {});
+    }
+  };
 
   const buttonhandlerr = () => {
-    setCodeBox("hidden")
-    setNumBox("flex")
-  
-  }
-
-  
+    setCodeBox("hidden");
+    setNumBox("flex");
+  };
 
   const inphanler = (e) => {
-    setnuminp(e.target.value)
+    setnuminp(e.target.value);
     if (numinp.length >= 9) {
-      setloading(false)
-    }else{
-      setloading(true)
+      setloading(false);
+    } else {
+      setloading(true);
     }
-  }
-
-  
+  };
 
   const codeinphandler = (e) => {
-    setcodeinp(e.target.value)
+    setcodeinp(e.target.value);
     if (codeinp.length >= 2) {
-      setloading(false)
-    }else{
-      setloading(true)
+      setloading(false);
+    } else {
+      setloading(true);
     }
-  }
+  };
 
-  const  loginhanler =  () => {
-    
-       axios.post(apiKey.login,{
-        number: Number("98"+numinp),
-        code: codeinp 
-       }).then((data) => {
+  const loginhanler = () => {
+    axios
+      .post(apiKey.login, {
+        number: Number("98" + numinp),
+        code: codeinp,
+      })
+      .then((data) => {
         console.log(data);
-        
-        if (data.data.massege === "ok") {
-          
-          const id = data.data.data._id
-          setLoginCookie(id);
-          
-          router.push("/userPannle")
-        }
 
+        if (data.data.massege === "ok") {
+          const id = data.data.data._id;
+          setLoginCookie(id);
+
+          router.push("/userPannle");
+        }
 
         if (data.data.massage === "data is false") {
-          seterr("کد اشتباه است")
+          seterr("کد اشتباه است");
         }
 
-        
         if (data.data.login === "true") {
-          const id = data.data.data._id
+          const id = data.data.data._id;
           setLoginCookie(id);
 
-          router.push("/userPannle")
+          router.push("/userPannle");
         }
-
-
-        
-       })
-       .catch((er) => {console.log(er);
-       })
-
-     
-  }
-  
-
+      })
+      .catch((er) => {
+        console.log(er);
+      });
+  };
 
   return (
-    <div className='w-full font-dorna h-[100vh] flex justify-center items-center'>
+    <div className="w-full font-dorna h-[100vh] flex justify-center items-center">
       <div className="h-96 m-9 max-Wide-mobile-s:m-5 flex justify-around items-center flex-col w-[600px] border rounded-xl border-gray-700">
         <div className="w-full flex justify-center items-center">
-          <img src="\logo\tylogoo-1.png" className='size-32' alt="" />
+          <img src="\logo\tylogoo-1.png" className="size-32" alt="" />
         </div>
 
-        <div className={`w-full ${NumBox} justify-center items-center flex-col`}>
+        <div
+          className={`w-full ${NumBox} justify-center items-center flex-col`}
+        >
           <div className="w-[90%] ">
-            <p className="font-extrabold text-2xl max-mobile-xlk:text-xl">ورود | ثبت نام</p>
-            <p className="text-lg max-mobile-xlk:text-sm mb-2 text-gray-500 font-extralight">برای ورود یا ثبت نام شماره موبایل خود را وارد کنید</p>
-          </div>
-          <div className="w-full flex justify-center items-center flex-row">
-            <input onChange={inphanler} value={numinp} placeholder='--- --- ----' type="text"  className="mr-1.5 rounded-l-none border-l-0 font-sans w-[83%] ltr border-2 rounded-md px-2 text-gray-500 text-xl font-extrabold h-12 border-gray-300" />
-            <div className="h-12 ml-1.5 font-extrabold flex justify-center items-center w-12 font-sans rounded-r-none ltr border-2 rounded-md px-2 text-gray-500 border-gray-300">+98</div>
-          </div>
-          
-        </div>
-
-        <div className={`w-full ${codeBox} justify-center items-center flex-col`}>
-          <div className="w-[97%] ">
-            <p className="font-extrabold text-2xl max-mobile-xlk:text-xl">ورود | ثبت نام</p>
+            <p className="font-extrabold text-2xl max-mobile-xlk:text-xl">
+              ورود | ثبت نام
+            </p>
             <p className="text-lg max-mobile-xlk:text-sm mb-2 text-gray-500 font-extralight">
-               برای ورود یا ثبت نام کد را وارد کنید
-               <span onClick={buttonhandlerr} className='mx-5 cursor-pointer text-sky-500 font-extrabold'>ویرایش شماره</span>
+              برای ورود یا ثبت نام شماره موبایل خود را وارد کنید
             </p>
           </div>
-          <input type="text" value={codeinp} onChange={codeinphandler} placeholder='کد را وارد کنید' className="w-[97%] border-2 rounded-md px-2 text-gray-500 font-semibold h-12 border-gray-300" />
+          <div className="w-full flex justify-center items-center flex-row">
+            <input
+              onChange={inphanler}
+              value={numinp}
+              placeholder="--- --- ----"
+              type="text"
+              className="mr-1.5 rounded-l-none border-l-0 font-sans w-[83%] ltr border-2 rounded-md px-2 text-gray-500 text-xl font-extrabold h-12 border-gray-300"
+            />
+            <div className="h-12 ml-1.5 font-extrabold flex justify-center items-center w-12 font-sans rounded-r-none ltr border-2 rounded-md px-2 text-gray-500 border-gray-300">
+              +98
+            </div>
+          </div>
+        </div>
+
+        <div
+          className={`w-full ${codeBox} justify-center items-center flex-col`}
+        >
+          <div className="w-[97%] ">
+            <p className="font-extrabold text-2xl max-mobile-xlk:text-xl">
+              ورود | ثبت نام
+            </p>
+            <p className="text-lg max-mobile-xlk:text-sm mb-2 text-gray-500 font-extralight">
+              برای ورود یا ثبت نام کد را وارد کنید
+              <span
+                onClick={buttonhandlerr}
+                className="mx-5 cursor-pointer text-sky-500 font-extrabold"
+              >
+                ویرایش شماره
+              </span>
+            </p>
+          </div>
+          <input
+            type="text"
+            value={codeinp}
+            onChange={codeinphandler}
+            placeholder="کد را وارد کنید"
+            className="w-[97%] border-2 rounded-md px-2 text-gray-500 font-semibold h-12 border-gray-300"
+          />
           <p className="text-lg text-red-500">{err}</p>
         </div>
 
-        <button disabled={loading} onClick={buttonhandler} className={`w-[97%] disabled:bg-gray-300 ${NumBox} justify-center items-center cursor-pointer h-12 rounded-lg bg-sky-500 text-white`}>ارسال</button>
-        <button disabled={loading} onClick={loginhanler} className={`w-[97%] disabled:bg-gray-300 ${codeBox} justify-center items-center cursor-pointer h-12 rounded-lg bg-sky-500 text-white`}>ورود | ثیت نام</button>
+        <button
+          disabled={loading}
+          onClick={buttonhandler}
+          className={`w-[97%] disabled:bg-gray-300 ${NumBox} justify-center items-center cursor-pointer h-12 rounded-lg bg-sky-500 text-white`}
+        >
+          ارسال
+        </button>
+        <button
+          disabled={loading}
+          onClick={loginhanler}
+          className={`w-[97%] disabled:bg-gray-300 ${codeBox} justify-center items-center cursor-pointer h-12 rounded-lg bg-sky-500 text-white`}
+        >
+          ورود | ثیت نام
+        </button>
       </div>
     </div>
-  )
+  );
 }
