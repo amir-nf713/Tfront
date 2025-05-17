@@ -3,6 +3,7 @@ import { useCallback, useState } from 'react'
 import axios from 'axios'
 import apiKey from '@/app/API'
 import Cookies from 'js-cookie';
+import { useRouter } from 'next/navigation';
 
 export default function ProfileForm() {
 
@@ -32,6 +33,8 @@ export default function ProfileForm() {
     reader.readAsDataURL(file)
   }
 
+  const router = useRouter()
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     const loginCookieValue = getCookie("login");
@@ -49,7 +52,7 @@ export default function ProfileForm() {
   
     try {
       await axios.put(`${apiKey.putuser}/${loginCookieValue}`, updatedData)
-      alert('اطلاعات با موفقیت ارسال شد!')
+      router.push("/userPannle")
     } catch (error) {
       alert('خطایی رخ داده است!')
       console.error(error)

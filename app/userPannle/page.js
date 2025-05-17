@@ -148,10 +148,10 @@ export default function UserProfile() {
               <div className="p-4 max-tablet-l:flex max-tablet-l: justify-center max-tablet-l:items-center max-tablet-l:flex-col mt-8 max-tablet-l:mt-0">
                 <p className="text-2xl font-bold">{user.name}</p>
                 <p className="text-lg mt-1.5 font-medium font-dorna text-gray-500">
-                  مدت زمان عضویت: {userAge}
+                  مدت زمان عضویت : {userAge}
                 </p>
                 <div className="flex  gap-1.5 flex-row items-center mt-8">
-                  <p className="text-lg max-tablet-l:text-sm font-bold"> وضعیت احراز هویت: </p>
+                  <p className="text-lg max-tablet-l:text-sm font-bold"> وضعیت احراز هویت : </p>
 
                   <div
                     className={`px-3 max-tablet-l:text-lg py-1 font-extrabold text-xl font-dorna rounded-full`}

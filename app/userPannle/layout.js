@@ -104,10 +104,10 @@ export default function RootLayout({ children }) {
                 <span className=""> موجودی : </span>
                 <span className="">
                   {" "}
-                  {(user.wallet * 1).toLocaleString()} نومان
+                  {(user.wallet * 1).toLocaleString()} تومان
                 </span>
               </div>
-              <div className="text-amber-300">افزایش موجودی</div>
+              <div className="text-amber-300 cursor-pointer">افزایش موجودی</div>
             </div>
 
             <div className="w-full mt-2 bg-gray-300 h-[1px]"></div>

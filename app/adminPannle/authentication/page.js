@@ -53,6 +53,28 @@ export default function Home() {
       })
   }
 
+  const no  = (item) => {
+    axios.put(`${apiKey.putuser}/${item.userid}`, {
+      Authentication: "false",
+    })
+      .then(() => {
+        // بعد از تایید، دوباره آیتم‌ها رو از سرور بگیر
+        fetchItems()
+        setSelectedItem(null)
+      })
+      .catch((err) => {
+        console.error('خطا در تایید:', err)
+      })
+
+      axios.delete(`${apiKey.authentication}/${item._id}`)
+      .then((res) => {
+        
+      })
+      .catch((err) => {
+        // console.error('خطا در دریافت اطلاعات:', err)
+      })
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 p-8">
       <h1 className="text-3xl font-bold mb-6">لیست کاربران در انتظار تایید</h1>
@@ -73,6 +95,12 @@ export default function Home() {
                 className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded"
               >
                 تایید
+              </button>
+              <button
+                onClick={() => no(item)}
+                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+              >
+                تایید نمیشود
               </button>
             </div>
           </li>
@@ -96,7 +124,7 @@ export default function Home() {
             <div className="grid grid-cols-3 gap-4">
               <div className="bg-gray-100 p-2 rounded border">تاریخ تولد:</div>
               <div className="bg-gray-100 p-2 rounded border col-span-2">
-                {selectedItem.birthDay} / {selectedItem.birthMonth} / {selectedItem.birthYear || selectedItem.berthday}
+                {selectedItem.brthday}
               </div>
             </div>
 
@@ -124,7 +152,7 @@ export default function Home() {
                 onClick={() => setSelectedItem(null)}
                 className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded"
               >
-                تایید
+                بستن
               </button>
             </div>
           </div>
