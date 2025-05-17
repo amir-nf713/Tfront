@@ -1,15 +1,30 @@
 'use client'
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import CorseBox from "../componnet/corseBox/CorseBox";
 import axios from "axios";
 import apiKey from "@/app/API";
 import Link from "next/link";
+import Cookies from "js-cookie";
 // import { useSearchParams } from "next/navigation";
 
 export default function page() {
   
     const [course, setcourse] = useState([])
+    const [user, setUser] = useState([]);
 
+    const getCookie = useCallback((name) => {
+      return Cookies.get(name) || null;
+    }, []);
+  
+    const loginCookieValue = getCookie("login");
+ useEffect(() => {
+    axios
+      .get(`${apiKey.getuserbyid}/${loginCookieValue}`)
+      .then((data) => {
+        setUser(data.data.data);
+      })
+      .catch(() => {});
+  }, []);
 
 
     useEffect(() => {
@@ -22,8 +37,10 @@ export default function page() {
   return (
     <div className="w-full flex justify-center items-center mt-16">
       <div className="w-11/12 max-tablet-l:gap-1.5 flex justify-center items-center flex-wrap gap-4">
+
       {
-        course.map((data, index) => (
+user.Authentication === "true" ? (
+   course.map((data, index) => (
             <Link href={`/userPannle/course/page?id=${data._id}`}>
                 <CorseBox
                   title={data.title}
@@ -35,6 +52,15 @@ export default function page() {
                 ></CorseBox>
             </Link>
         ))
+) : (
+  <div className="h-screen pb-16 bg-gray-100 flex items-center justify-center">
+  <div className="bg-white p-8 rounded-lg shadow-lg text-center text-xl text-gray-700">
+    قبل از احراز هویت این صفحه در دسترس نمی‌باشد
+  </div>
+</div>
+)
+
+       
     }
       </div>
     </div>

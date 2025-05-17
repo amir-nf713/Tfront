@@ -19,6 +19,7 @@ export default function RootLayout({ children }) {
 
   const [user, setUser] = useState([]);
   const [menu, setmenu] = useState("-right-96");
+  const [Popup, setPopup] = useState("hidden");
 
   const getCookie = useCallback((name) => {
     return Cookies.get(name) || null;
@@ -45,6 +46,15 @@ export default function RootLayout({ children }) {
     }
   };
 
+
+  const handlepopop = () => {
+    if (Popup === "hidden") {
+      setPopup("flex");
+    } else {
+      setPopup("hidden");
+    }
+  };
+
   return (
     <div className="w-full flex flex-row rtl h-[100vh]">
       <button
@@ -55,7 +65,7 @@ export default function RootLayout({ children }) {
       </button>
       <div className="z-50">
         <div
-          className={`max-Wide-mobile-s:w-60 h-[100vh] fixed top-0 ${menu} transition-all font-dorna w-96 flex flex-col items-center bg-[#3F3F46]`}
+          className={`overflow-x-auto max-Wide-mobile-s:w-60 h-[100vh] fixed top-0 ${menu} transition-all font-dorna w-96 flex flex-col items-center bg-[#3F3F46]`}
         >
           <button
             onClick={Menuhandler}
@@ -109,39 +119,55 @@ export default function RootLayout({ children }) {
             </Link>
             {user.Authentication === "false" ? (
               <Link className="w-full" href={"/userPannle/Authentication"}>
-                <MenuBtn text="احراض هویت"></MenuBtn>
+                <MenuBtn text="احراز هویت"></MenuBtn>
               </Link>
             ) : (
               <></>
             )}
-
-            {user.Authentication === "true" ? (
               <Link className="w-full" href={"/userPannle/course"}>
-              <MenuBtn text="درخواست تدریس"></MenuBtn>
+              <MenuBtn text="شرکت در دوره"></MenuBtn>
             </Link>
-            ) : (
-              <></>
-            )}
+            <Link className="w-full" href={"/userPannle/userCourse"}>
+              <MenuBtn text="دوره های خریداری شده"></MenuBtn>
+            </Link>
 
+            <Link className="w-full" href={"/userPannle/ticket"}>
+              <MenuBtn text="تیکتینگ"></MenuBtn>
+            </Link>
             
             <Link className="w-full" href={"/userPannle/cashwithdrawal"}>
               <MenuBtn text="برداشت وجه"></MenuBtn>
             </Link>
-            <Link className="w-full" href={"/userPannle/ticket"}>
-              <MenuBtn text="تیکتینگ"></MenuBtn>
-            </Link>
-            <Link className="w-full" href={"/userPannle/userCourse"}>
-              <MenuBtn text="دوره ها"></MenuBtn>
-            </Link>
+
             <Link className="w-full" href={"/userPannle/user"}>
               <MenuBtn text="تنظیمات کاربری"></MenuBtn>
             </Link>
-            <div onClick={handleRemoveCookie} className="w-full">
+             <div onClick={handlepopop} className="w-full">  {/*handleRemoveCookie */}
               <MenuBtn text="خروچ از حساب"></MenuBtn>
             </div>
           </div>
         </div>
       </div>
+      <div className={`fixed inset-0 bg-black/80 backdrop-blur-xl bg-opacity-50 ${Popup} justify-center items-center`}>
+          <div className="bg-white rounded-lg shadow-lg p-6 w-11/12 sm:w-96">
+            <h2 className="text-xl font-semibold text-center mb-4">آیا می‌خواهید از حساب خود خارج شوید؟</h2>
+            <div className="flex justify-around mt-4">
+              {/* دکمه‌های بله و خیر */}
+              <button
+                onClick={handlepopop}
+                className="px-4 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition duration-300"
+              >
+                خیر
+              </button>
+              <button
+                onClick={handleRemoveCookie}
+                className="px-4 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition duration-300"
+              >
+                بله
+              </button>
+            </div>
+          </div>
+        </div>
       <div className="w-full">{children}</div>
     </div>
   );

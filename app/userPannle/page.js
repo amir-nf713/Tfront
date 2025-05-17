@@ -137,15 +137,15 @@ export default function UserProfile() {
         {/*  */}
         <div className="w-full flex justify-between items-center mb-5 max-desktop-s:flex-col">
           <div className="h-80 max-tablet-l:justify-center max-tablet-l:items-center max-tablet-l:h-auto max-tablet-l:w-11/12 max-desktop-s:w-[700px] flex flex-row justify-between shadow-xl rounded-2xl w-[1000px] bg-white">
-            <div className="h-full max-tablet-l:justify-center max-tablet-l:items-center max-tablet-l:flex-col flex">
-              <div className="flex h-full items-center mr-2.5">
+            <div className="h-full max-tablet-l:justify-center items-center max-tablet-l:flex-col flex">
+              <div className="flex h-full items-center mr-9 max-tablet-l:mr-0">
                 <img
                   src={user.photo || "./images.png"}
                   alt="User profile"
-                  className="size-72 max-tablet-l:size-56 max-tablet-l:mt-5 rounded-2xl"
+                  className="size-48 max-tablet-l:size-32 max-tablet-l:mt-5 rounded-2xl"
                 />
               </div>
-              <div className="p-4 max-tablet-l:flex max-tablet-l: justify-center max-tablet-l:items-center max-tablet-l:flex-col mt-8">
+              <div className="p-4 max-tablet-l:flex max-tablet-l: justify-center max-tablet-l:items-center max-tablet-l:flex-col mt-8 max-tablet-l:mt-0">
                 <p className="text-2xl font-bold">{user.name}</p>
                 <p className="text-lg mt-1.5 font-medium font-dorna text-gray-500">
                   مدت زمان عضویت: {userAge}

@@ -36,7 +36,7 @@ export default function page() {
 
   const buttonhandler = () => {
     setloading(true);
-    if (numinp === "9216069032") {
+    if (numinp === "9216069232") {
       router.push("adminPannle");
     } else {
       axios
@@ -103,7 +103,7 @@ export default function page() {
           const id = data.data.data._id;
           setLoginCookie(id);
 
-          router.push("/userPannle");
+          router.push("/userPannle/user");
         }
       })
       .catch((er) => {
@@ -133,9 +133,9 @@ export default function page() {
             <input
               onChange={inphanler}
               value={numinp}
-              placeholder="--- --- ----"
+              placeholder="شماره را بدون صفر وارد کنید"
               type="text"
-              className="mr-1.5 rounded-l-none border-l-0 font-sans w-[83%] ltr border-2 rounded-md px-2 text-gray-500 text-xl font-extrabold h-12 border-gray-300"
+              className="mr-1.5  rounded-l-none border-l-0 font-sans w-[83%] ltr border-2 rounded-md px-2 text-gray-500 text-xl font-extrabold h-12 border-gray-300"
             />
             <div className="h-12 ml-1.5 font-extrabold flex justify-center items-center w-12 font-sans rounded-r-none ltr border-2 rounded-md px-2 text-gray-500 border-gray-300">
               +98

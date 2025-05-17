@@ -8,13 +8,8 @@ import Link from "next/link";
 
 export default function TicketsPage() {
   const [tickets, setTickets] = useState([]);
-
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-
-
- 
- 
   const getCookie = useCallback((name) => {
     return Cookies.get(name) || null;
   }, []);
@@ -35,38 +30,42 @@ export default function TicketsPage() {
   }, [getCookie]);
 
   return (
-    <div className="min-h-screen p-4 bg-gray-50">
-    
-      {/* دکمه ثبت تیکت */}
-      <div className="flex justify-center mb-6">
+    <div className="min-h-screen bg-gray-50 p-6">
+      {/* دکمه ثبت تیکت جدید */}
+      <div className="flex justify-center mb-8">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-8 rounded-md font-bold"
+          className="bg-blue-500 hover:bg-blue-600 text-white py-3 px-6 rounded-md font-semibold shadow-md transition duration-300"
         >
           + ثبت تیکت جدید
         </button>
       </div>
 
       {/* لیست تیکت‌ها */}
-      <div className="max-w-3xl mx-auto space-y-4">
+      <div className="max-w-4xl mx-auto space-y-6">
         {tickets.map((ticket) => (
           <div
             key={ticket.id}
-            className="flex justify-between items-center bg-white rounded-lg shadow p-4"
+            className="flex justify-between items-center bg-white rounded-lg shadow-sm p-6 transition-transform transform hover:scale-105 hover:shadow-lg"
           >
-            <span>{ticket.title}</span>
-            <span className="text-gray-600">{ticket.date.split("T")[0]}</span>
-            
+            <div className="space-y-2">
+              <h3 className="text-xl font-semibold text-gray-800">{ticket.title}</h3>
+              <span className="text-gray-500 text-sm">{ticket.date.split("T")[0]}</span>
+            </div>
+
             <span
-              className={`text-sm font-bold px-3 py-1 rounded ${
+              className={`text-sm font-bold px-4 py-1 rounded-full ${
                 ticket.status === "درحال بررسی"
-                  ? "bg-orange-300 text-white"
+                  ? "bg-yellow-400 text-white"
                   : "bg-gray-400 text-white"
               }`}
             >
-              {ticket.status === "درحال بررسی" ?"باز " : "بسته شده"}
+              {ticket.status === "درحال بررسی" ? "باز" : "بسته شده"}
             </span>
-            <Link href={`/userPannle/ticket/page?id=${ticket._id}`} className="text-blue-500 cursor-pointer"> مشاهده </Link>
+
+            <Link href={`/userPannle/ticket/page?id=${ticket._id}`} className="text-blue-500 hover:text-blue-700">
+              مشاهده
+            </Link>
           </div>
         ))}
       </div>
@@ -75,8 +74,7 @@ export default function TicketsPage() {
       <Popup
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        
-      ></Popup>
+      />
     </div>
   );
 }
