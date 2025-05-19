@@ -125,14 +125,14 @@ export default function RootLayout({ children }) {
               <></>
             )}
               <Link className="w-full" href={"/userPannle/course"}>
-              <MenuBtn text="شرکت در دوره"></MenuBtn>
+              <MenuBtn text="عضویت در تدریس یار"></MenuBtn>
             </Link>
             <Link className="w-full" href={"/userPannle/userCourse"}>
-              <MenuBtn text="دوره های خریداری شده"></MenuBtn>
+              <MenuBtn text="ویدیو ها"></MenuBtn>
             </Link>
 
             <Link className="w-full" href={"/userPannle/ticket"}>
-              <MenuBtn text="تیکتینگ"></MenuBtn>
+              <MenuBtn text="تیکت ها"></MenuBtn>
             </Link>
             
             <Link className="w-full" href={"/userPannle/cashwithdrawal"}>

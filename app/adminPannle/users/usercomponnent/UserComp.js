@@ -47,7 +47,7 @@ const UserProfile = (props) => {
 
   return (
     <div className="w-72 p-5 rounded-lg bg-gray-50 shadow-sm border border-gray-200 font-sans">
-      <img src={props.profile} alt="userData.name" />
+      <img src={props.profile} alt="img" />
       <h2 className="text-lg font-semibold text-gray-800 mb-4">{props.name}</h2>
 
       <div className="flex justify-between items-center mb-3 text-sm">

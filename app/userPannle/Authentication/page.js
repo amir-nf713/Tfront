@@ -27,6 +27,9 @@ export default function UserForm() {
     cartmeliphoto: "",
     userid: loginCookieValue,
   });
+  const [okFaechdata, setokFaechdata] = useState("")
+  const [okFaechdataa, setokFaechdataa] = useState("hidden")
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,15 +65,25 @@ export default function UserForm() {
          email : formData.email,
          gnder : formData.gnder,
          brthday : formData.brthday,        
-      }); // تغییر بده به endpoint خودت
+      }); 
+
       axios.put(`${apiKey.putuser}/${loginCookieValue}`,{
         Authentication : "درحال بررسی",
       }).then(data => {
-        console.log(data);
+       
         
         
       }).catch(err => {})
-      router.push("/userPannle")
+      setokFaechdata("hidden")
+      setokFaechdataa("flex")
+
+
+      setTimeout(() => {
+        router.push("/userPannle");
+      }, 2000);
+      
+      
+    
     } catch (err) {
       console.error("Error submitting form:", err);
     }
@@ -81,7 +94,7 @@ export default function UserForm() {
 
     <form
       onSubmit={handleSubmit}
-      className="max-w-4xl mx-auto p-6 bg-white shadow-xl rounded-2xl space-y-6 font-dorna"
+      className={`max-w-4xl ${okFaechdata} mx-auto p-6 bg-white shadow-xl rounded-2xl space-y-6 font-dorna`}
     >
       <h2 className="text-2xl font-bold text-center text-gray-800">
         فرم اطلاعات کاربری
@@ -229,6 +242,7 @@ export default function UserForm() {
         ارسال اطلاعات
       </button>
     </form>
+       <div className={`${okFaechdataa} justify-center items-center h-16 rounded-2xl w-60 bg-white shadow-xl`}>با موفقیت ارسال شد</div>
     </div>
   );
 }

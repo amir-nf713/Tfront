@@ -22,6 +22,7 @@ export default function page() {
   const [numinp, setnuminp] = useState("");
   const [codeinp, setcodeinp] = useState("");
   const [err, seterr] = useState("");
+  const [errsendCode, seterrsendCode] = useState("ارسال");
   const [loading, setloading] = useState(true);
 
   
@@ -50,6 +51,12 @@ export default function page() {
               setNumBox("hidden");
               setloading(false);
             }
+          }
+          if (data.data.message === 'You have reached the limit of requests (5 per 5 minutes)') {
+           seterrsendCode("دسترسی شما تا دقایقی محدود شده")
+           setInterval(() => {
+            seterrsendCode("ارسال")
+           }, 120000);
           }
         })
         .catch((errr) => {});
@@ -86,7 +93,7 @@ export default function page() {
         code: codeinp,
       })
       .then((data) => {
-        console.log(data);
+      
 
         if (data.data.massege === "ok") {
           const id = data.data.data._id;
@@ -98,12 +105,14 @@ export default function page() {
         if (data.data.massage === "data is false") {
           seterr("کد اشتباه است");
         }
+        
+        
 
         if (data.data.login === "true") {
           const id = data.data.data._id;
           setLoginCookie(id);
 
-          router.push("/userPannle/user");
+          router.push("/userPannle");
         }
       })
       .catch((er) => {
@@ -141,6 +150,7 @@ export default function page() {
               +98
             </div>
           </div>
+          <p className="font-light max-Wide-mobile-s:text-xs text-sm text-red-500 text-start w-[90%] pt-2"> - شماره را بدون صفر وارد کنید  : 0000-000-900</p>
         </div>
 
         <div
@@ -175,7 +185,7 @@ export default function page() {
           onClick={buttonhandler}
           className={`w-[97%] disabled:bg-gray-300 ${NumBox} justify-center items-center cursor-pointer h-12 rounded-lg bg-sky-500 text-white`}
         >
-          ارسال
+          {errsendCode}
         </button>
         <button
           disabled={loading}

@@ -4,6 +4,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import apiKey from "../API";
 import Cookies from "js-cookie";
 import { GoArrowDown } from "react-icons/go";
+import { useRouter } from "next/navigation";
 
 export default function UserProfile() {
   const [user, setUser] = useState(null);
@@ -17,7 +18,7 @@ export default function UserProfile() {
   const [ticketUtextcolor, setticketUtextcolor] = useState("");
   const [ticketUbgcolor, setticketUbgcolor] = useState("");
   const [loading, setLoading] = useState(true);
-
+ const router = useRouter()
   const calculateUserAge = useCallback((createdDate) => {
     if (!createdDate) return "نامشخص";
 
@@ -63,6 +64,10 @@ export default function UserProfile() {
           `${apiKey.getuserbyid}/${loginCookieValue}`
         );
         setUser(response.data.data);
+        if (response.data.data.name === "unknown") {
+          router.push("/userPannle/user")
+        }
+        
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
@@ -72,6 +77,9 @@ export default function UserProfile() {
 
     fetchUserData();
   }, [getCookie]);
+
+ 
+ 
 
   useEffect(() => {
     const fetchData = async () => {
@@ -112,6 +120,8 @@ export default function UserProfile() {
 
     return () => clearInterval(interval);
   }, [user]);
+
+ 
 
   if (loading) {
     return (
@@ -196,11 +206,11 @@ export default function UserProfile() {
         </div>
  {/*  */}
         <div className="flex max-desktop-s:mt-0 flex-row max-desktop-s:flex-col items-center justify-between w-full">
-          <div className="h-[550px] gap-2 flex flex-col  max-tablet-l:w-11/12 max-tablet-l:  max-desktop-s:w-[700px] overflow-auto px-3 py-4 w-[743px] bg-white shadow-xl rounded-2xl">
+          <div className="h-[550px] gap-6 flex flex-col  max-tablet-l:w-11/12 max-tablet-l:  max-desktop-s:w-[700px] overflow-auto px-3 py-4 w-[743px] bg-white shadow-xl rounded-2xl">
             {Array.isArray(ticket) && ticket.length > 0 ? (
               ticket.map((data, index) => (
                 <div key={index} className="font-dorna font-bold text-gray-500 flex flex-row items-center justify-between">
-                  <div className="">{data.title}</div>
+                  <div className="w-[40%]">{data.title}</div>
                   <div className="max-Wide-mobile-xl:hidden" >{data.date.split("T")[0]}</div>
                   {data.status === "درحال بررسی" ? (
                     
@@ -217,11 +227,11 @@ export default function UserProfile() {
                     <div
                       className={`px-3 py-1 font-extrabold text-xl font-dorna rounded-full`}
                       style={{
-                        backgroundColor: "#A2FFAD",
-                        color: "#05CF2A",
+                        backgroundColor: "#FF8F8F",
+                        color: "#FF0000",
                       }}
                     >
-                      <p className="">پاسخ داده شده </p>
+                      <p className="text-sm">بسته شده</p>
                     </div>
                   )}
                 </div>
