@@ -1,10 +1,11 @@
-"use client"
-import React, { useState } from 'react';
-import axios from 'axios';
-import apiKey from '@/app/API';
+"use client";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import apiKey from "@/app/API";
 
 const UserProfile = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ModalOpen, setModalOpen] = useState(false);
   const [userData, setUserData] = useState({
     name: props.name,
     number: props.phoneNumber,
@@ -12,8 +13,21 @@ const UserProfile = (props) => {
     Authentication: props.status,
   });
 
+  const [user, setUser] = useState([]);
+  useEffect(() => {
+    axios
+      .get(`${apiKey.getuserbyid}/${props.id}`)
+      .then((data) => {
+        setUser(data.data.data);
+      })
+      .catch(() => {});
+  }, []);
+
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
+  };
+  const Modal = () => {
+    setModalOpen(!ModalOpen);
   };
 
   const handleInputChange = (e) => {
@@ -38,34 +52,34 @@ const UserProfile = (props) => {
     try {
       // ارسال درخواست برای حذف کاربر
       await axios.delete(`${apiKey.deletuser}/${props.id}`);
-     
+
       // برای آپدیت صفحه پس از حذف کاربر می‌توانید از یک متد یا رفرش صفحه استفاده کنید.
-    } catch (error) {
-      
-    }
+    } catch (error) {}
   };
 
   return (
-    <div className="w-72 p-5 rounded-lg bg-gray-50 shadow-sm border border-gray-200 font-sans">
-      <img src={props.profile} alt="img" />
+    <div className="w-72 p-5 flex justify-center items-center flex-col rounded-lg bg-gray-50 shadow-sm border border-gray-200 font-sans">
+      <img src={props.profile} alt="img" className="h-32" />
       <h2 className="text-lg font-semibold text-gray-800 mb-4">{props.name}</h2>
 
-      <div className="flex justify-between items-center mb-3 text-sm">
+      <div className="flex justify-between items-center mb-3 text-sm w-full">
         <span className="text-gray-600">مدت زمان عضویت:</span>
-        <span className="text-gray-800 font-medium">{props.membershipDuration}</span>
+        <span className="text-gray-800 font-medium">
+          {props.membershipDuration}
+        </span>
       </div>
 
-      <div className="flex justify-between items-center mb-3 text-sm">
+      <div className="flex justify-between items-center mb-3 text-sm w-full">
         <span className="text-gray-600">وضعیت احراز هویت:</span>
         <span className="text-green-600 font-medium">{props.status}</span>
       </div>
 
-      <div className="flex justify-between items-center mb-3 text-sm">
+      <div className="flex justify-between items-center mb-3 text-sm w-full">
         <span className="text-gray-600">موجودی حساب:</span>
         <span className="text-gray-800 font-medium">{props.balance}</span>
       </div>
 
-      <div className="flex justify-between items-center mb-3 text-sm">
+      <div className="flex justify-between items-center mb-3 text-sm w-full">
         <span className="text-gray-600">شماره:</span>
         <span className="text-gray-800 font-medium">{props.phoneNumber}</span>
       </div>
@@ -75,6 +89,12 @@ const UserProfile = (props) => {
         className="w-full py-2 mt-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md transition-colors duration-300"
       >
         ویرایش
+      </button>
+      <button
+        onClick={Modal}
+        className="w-full py-2 mt-4 bg-neutral-400 hover:bg-neutral-500 text-white font-semibold rounded-md transition-colors duration-300"
+      >
+        نمایش اطلاعات
       </button>
 
       <button
@@ -113,7 +133,9 @@ const UserProfile = (props) => {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700">موجودی حساب:</label>
+                <label className="block text-sm text-gray-700">
+                  موجودی حساب:
+                </label>
                 <input
                   type="text"
                   name="wallet"
@@ -124,7 +146,9 @@ const UserProfile = (props) => {
                 />
               </div>
               <div>
-                <label className="block text-sm text-gray-700">وضعیت احراز هویت:</label>
+                <label className="block text-sm text-gray-700">
+                  وضعیت احراز هویت:
+                </label>
                 <input
                   type="text"
                   name="Authentication"
@@ -134,7 +158,6 @@ const UserProfile = (props) => {
                   required
                 />
               </div>
-           
 
               <button
                 type="submit"
@@ -150,6 +173,54 @@ const UserProfile = (props) => {
                 بستن
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {ModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+          <div className="bg-white flex justify-center items-center flex-col p-6 rounded-lg shadow-lg max-w-sm w-full">
+            <div className="flex justify-between items-center mb-3 text-sm w-full">
+              <span className="text-gray-600">شماره:</span>
+              <span className="text-gray-800 font-medium">{user.number}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3 text-sm w-full">
+              <span className="text-gray-600">اسم:</span>
+              <span className="text-gray-800 font-medium">{user.name}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3 text-sm w-full">
+              <span className="text-gray-600">فامیلی:</span>
+              <span className="text-gray-800 font-medium">{user.lastname}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3 text-sm w-full">
+              <span className="text-gray-600">موجودی:</span>
+              <span className="text-gray-800 font-medium">{user.wallet}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3 text-sm w-full">
+              <span className="text-gray-600">کدملی:</span>
+              <span className="text-gray-800 font-medium">{user.codemeli}</span>
+            </div>
+            <div className="flex justify-between items-center mb-3 text-sm w-full">
+              <span className="text-gray-600">ایمیل:</span>
+              <span className="text-gray-800 font-medium">{user.email}</span>
+            </div>
+
+            <div className="flex justify-between items-center mb-3 text-sm w-full">
+              <span className="text-gray-600">وضعیت احراز هویت:</span>
+              <span className="text-green-600 font-medium">
+                {user.Authentication}
+              </span>
+            </div>
+            <div className="flex justify-center items-center mb-3 text-sm w-full">
+              <img src={user.cartmeliphoto} className="h-40 w-52 object-contain" />
+            </div>
+            <button
+              type="button"
+              onClick={Modal}
+              className="w-full py-2 mt-2 bg-gray-500 hover:bg-gray-600 text-white font-semibold rounded-md transition-colors duration-300"
+            >
+              بستن
+            </button>
           </div>
         </div>
       )}

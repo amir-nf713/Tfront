@@ -25,7 +25,8 @@ export default function WithdrawalPanel() {
     axios
       .get(`${apiKey.withdrawalMoney}/${loginCookieValue}`)
       .then((data) => {
-        setsendmoney(data.data.data);
+        setsendmoney(data.data.data.reverse());
+
       })
       .catch(() => {});
   }, [amount]);
@@ -88,7 +89,7 @@ export default function WithdrawalPanel() {
         const walletBalance = Number(user.wallet);
         const withdrawAmount = Number(amount);
   
-        if (walletBalance >= withdrawAmount) {
+        
           // بروزرسانی کیف پول
           await axios.put(`${apiKey.putuser}/${user._id}`, {
             wallet: walletBalance - withdrawAmount,
@@ -126,10 +127,7 @@ export default function WithdrawalPanel() {
             }
           );
      
-        } else {
-          seterrsendCode("مبلغ برداشت بیشتر از موجودی است ❌");
-
-        }
+      
       } else {
         seterrsendCode("کد تأیید اشتباه است ❌");
       }
@@ -146,7 +144,7 @@ export default function WithdrawalPanel() {
 
   return (
     <div className="w-full min-h-screen bg-gray-100 flex justify-center items-center p-6">
-      <div className="bg-white w-full max-w-5xl rounded-xl shadow-xl flex flex-col md:flex-row overflow-hidden">
+      <div className="bg-white border-8 border-white w-full max-w-5xl rounded-xl shadow-xl flex flex-col md:flex-row overflow-hidden">
         {/* Left Side */}
         <div className="w-full md:w-1/2 p-6 bg-white">
           <div className="bg-sky-100 text-sky-600 font-bold text-3xl text-center py-6 rounded-lg">
@@ -205,7 +203,7 @@ export default function WithdrawalPanel() {
         </div>
 
         {/* Right Side */}
-        <div className="w-full overflow-y-auto max-h-[700px] md:w-1/2 p-6 bg-white">
+        <div className="w-full overflow-y-auto max-h-[550px] md:w-1/2 p-6 bg-white">
           {sendmoney.map((data, index) => (
             <div
               key={index}
@@ -223,7 +221,7 @@ export default function WithdrawalPanel() {
               <span className="text-gray-500 text-sm">
                 {data.date.split("T")[0]}
               </span>
-              <span className="text-sky-500 font-bold">{data.price}</span>
+              <span className="text-sky-500 w-[30%] flex justify-end font-bold">{(data.price * 1).toLocaleString()}</span>
             </div>
           ))}
         </div>

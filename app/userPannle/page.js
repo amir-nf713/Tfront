@@ -5,9 +5,12 @@ import apiKey from "../API";
 import Cookies from "js-cookie";
 import { GoArrowDown } from "react-icons/go";
 import { useRouter } from "next/navigation";
+import { data } from "autoprefixer";
 
 export default function UserProfile() {
   const [user, setUser] = useState(null);
+  const [USD, setUSD] = useState(null);
+  const [EUR, seEUR] = useState(null);
   const [ticket, setticket] = useState([]);
   const [userAuthentication, setUserAuthentication] = useState("");
   const [userAuthenticationtextcolor, setUserAuthenticationtextcolor] =
@@ -18,7 +21,7 @@ export default function UserProfile() {
   const [ticketUtextcolor, setticketUtextcolor] = useState("");
   const [ticketUbgcolor, setticketUbgcolor] = useState("");
   const [loading, setLoading] = useState(true);
- const router = useRouter()
+  const router = useRouter();
   const calculateUserAge = useCallback((createdDate) => {
     if (!createdDate) return "نامشخص";
 
@@ -65,9 +68,8 @@ export default function UserProfile() {
         );
         setUser(response.data.data);
         if (response.data.data.name === "unknown") {
-          router.push("/userPannle/user")
+          router.push("/userPannle/user");
         }
-        
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
@@ -78,8 +80,23 @@ export default function UserProfile() {
     fetchUserData();
   }, [getCookie]);
 
- 
- 
+  const price = () => {
+    
+
+      axios
+        .get(apiKey.usd)
+        .then((data) => {setUSD(data.data.data)})
+        .catch((err) => {});
+  
+      axios
+        .get(apiKey.eur)
+        .then((data) => {seEUR(data.data.data)})
+        .catch((err) => {});
+    
+  };
+  price()
+
+  setInterval(price, 60000);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -108,7 +125,7 @@ export default function UserProfile() {
         setUserAuthentication("تایید شده");
         setUserAuthenticationtextcolor("#05CF2A");
         setUserAuthenticationbgcolor("#A2FFAD");
-      }else if (user.Authentication === "درحال بررسی") {
+      } else if (user.Authentication === "درحال بررسی") {
         setUserAuthentication("درحال بررسی");
         setUserAuthenticationtextcolor("#FD7600");
         setUserAuthenticationbgcolor("#FFB06B");
@@ -120,8 +137,6 @@ export default function UserProfile() {
 
     return () => clearInterval(interval);
   }, [user]);
-
- 
 
   if (loading) {
     return (
@@ -161,7 +176,10 @@ export default function UserProfile() {
                   مدت زمان عضویت : {userAge}
                 </p>
                 <div className="flex  gap-1.5 flex-row items-center mt-8">
-                  <p className="text-lg max-tablet-l:text-sm font-bold"> وضعیت احراز هویت : </p>
+                  <p className="text-lg max-tablet-l:text-sm font-bold">
+                    {" "}
+                    وضعیت احراز هویت :{" "}
+                  </p>
 
                   <div
                     className={`px-3 max-tablet-l:text-lg py-1 font-extrabold text-xl font-dorna rounded-full`}
@@ -185,7 +203,7 @@ export default function UserProfile() {
               </div>
               <div>
                 <p>EUR</p>
-                <p>100.000</p>
+                <p>{(EUR * 1).toLocaleString()}</p>
               </div>
             </div>
 
@@ -199,21 +217,25 @@ export default function UserProfile() {
               </div>
               <div>
                 <p>USD</p>
-                <p>70.000</p>
+                <p>{(USD * 1).toLocaleString()}</p>
               </div>
             </div>
           </div>
         </div>
- {/*  */}
+        {/*  */}
         <div className="flex max-desktop-s:mt-0 flex-row max-desktop-s:flex-col items-center justify-between w-full">
           <div className="h-[550px] gap-6 flex flex-col  max-tablet-l:w-11/12 max-tablet-l:  max-desktop-s:w-[700px] overflow-auto px-3 py-4 w-[743px] bg-white shadow-xl rounded-2xl">
             {Array.isArray(ticket) && ticket.length > 0 ? (
               ticket.map((data, index) => (
-                <div key={index} className="font-dorna font-bold text-gray-500 flex flex-row items-center justify-between">
+                <div
+                  key={index}
+                  className="font-dorna font-bold text-gray-500 flex flex-row items-center justify-between"
+                >
                   <div className="w-[40%]">{data.title}</div>
-                  <div className="max-Wide-mobile-xl:hidden" >{data.date.split("T")[0]}</div>
+                  <div className="max-Wide-mobile-xl:hidden">
+                    {data.date.split("T")[0]}
+                  </div>
                   {data.status === "درحال بررسی" ? (
-                    
                     <div
                       className={`px-3 py-1 font-extrabold text-xl font-dorna rounded-full`}
                       style={{
@@ -245,17 +267,17 @@ export default function UserProfile() {
             <div className="rounded-2xl bg-white flex flex-col justify-around items-center shadow-xl w-full h-64">
               <div className="w-[95%] gap-1.5 text-white text-2xl font-extrabold flex justify-center items-center rounded-2xl h-1/2 bg-sky-300">
                 <span className="">{(user.wallet * 1).toLocaleString()}</span>
-                 
+
                 <span className=""> تومان </span>
               </div>
               <div className="flex flex-row justify-center items-center bg-[#A2FFAD] text-[#05cf2a] text-xl font-bold px-3 py-2 rounded-full">
                 <span className="">{(user.deposit * 1).toLocaleString()}</span>
-                <span className=""><GoArrowDown /></span>
+                <span className="">
+                  <GoArrowDown />
+                </span>
               </div>
             </div>
-            <div className=" max-desktop-s:hidden rounded-2xl bg-sky-300 shadow-xl w-full h-64">
-
-            </div>
+            <div className=" max-desktop-s:hidden rounded-2xl bg-sky-300 shadow-xl w-full h-64"></div>
           </div>
         </div>
       </div>

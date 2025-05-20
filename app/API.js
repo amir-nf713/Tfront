@@ -17,6 +17,8 @@ const apiKey = ({
   adminsendsms : `${Url}//admin/sendsms`, // id
   adminlogin : `${Url}/admin/login`, // id
   deletuser : `${Url}/deletuser`, // id
+  usd : `${Url}/usd`, // id
+  eur : `${Url}/eur`, // id
   
 });
 

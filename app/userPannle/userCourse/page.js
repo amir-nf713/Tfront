@@ -64,7 +64,7 @@ export default function Page() {
   if (filteredCourses.length === 0)
     return (
       <div className="text-center mt-10 text-gray-700">
-        شما هنوز هیچ دوره‌ای خریداری نکرده‌اید.
+        شما هنوز در تدریس یار عضو نشده اید .
       </div>
     );
 

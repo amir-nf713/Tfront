@@ -107,7 +107,7 @@ export default function RootLayout({ children }) {
                   {(user.wallet * 1).toLocaleString()} تومان
                 </span>
               </div>
-              <div className="text-amber-300 cursor-pointer">افزایش موجودی</div>
+              
             </div>
 
             <div className="w-full mt-2 bg-gray-300 h-[1px]"></div>
@@ -139,6 +139,9 @@ export default function RootLayout({ children }) {
               <MenuBtn text="برداشت وجه"></MenuBtn>
             </Link>
 
+            <Link className="w-full" href={"/userPannle/Contactus"}>
+              <MenuBtn text="ارتباط با ما"></MenuBtn>
+            </Link>
             <Link className="w-full" href={"/userPannle/user"}>
               <MenuBtn text="تنظیمات کاربری"></MenuBtn>
             </Link>
