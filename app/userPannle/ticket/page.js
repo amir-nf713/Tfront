@@ -24,7 +24,7 @@ export default function TicketsPage() {
       
         // مرتب‌سازی بر اساس تاریخ به صورت نزولی (جدیدترین اول)
         const sortedTickets = res.data.data.sort((a, b) => new Date(b.date) - new Date(a.date));
-      
+        setTickets(sortedTickets)
         // setTickets(sortedTickets);
       } catch (error) {
         console.error("Error fetching ticket data:", error);

@@ -1,5 +1,5 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import axios from "axios";
 import apiKey from "@/app/API";
 import Cookies from "js-cookie";
@@ -9,11 +9,22 @@ import { data } from "autoprefixer";
 export default function UserForm() {
   const router = useRouter()
 
-    const getCookie = useCallback((name) => {
-        return Cookies.get(name) || null;
-      }, []);
-      
-      const loginCookieValue = getCookie('login');
+
+    const [user, setUser] = useState([]);
+
+  const getCookie = useCallback((name) => {
+    return Cookies.get(name) || null;
+  }, []);
+
+  const loginCookieValue = getCookie("login");
+useEffect(() => {
+  axios
+    .get(`${apiKey.getuserbyid}/${loginCookieValue}`)
+    .then((data) => {
+      setUser(data.data.data);
+    })
+    .catch(() => {});
+}, []);
   const [formData, setFormData] = useState({
     name: "",
     lastname: "",
@@ -78,6 +89,26 @@ export default function UserForm() {
       setokFaechdataa("flex")
 
 
+      axios.post(
+        "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+        {
+          code: "dsetfhc1s6voo6p",
+          sender: "+983000505",
+          recipient: `+${user.number}`,
+          variable: {
+            name: `${user.name}`,
+          },
+        },
+        {
+          headers: {
+            accept: "application/json",
+            apikey:
+              "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
       setTimeout(() => {
         router.push("/userPannle");
       }, 2000);

@@ -2,11 +2,20 @@
 
 import apiKey from '@/app/API'
 import axios from 'axios'
-import { useEffect, useState } from 'react'
+import Cookies from 'js-cookie'
+import { useCallback, useEffect, useState } from 'react'
 
 export default function Home() {
   const [items, setItems] = useState([])
   const [selectedItem, setSelectedItem] = useState(null)
+  const [user, setUser] = useState([]);
+
+  
+
+  
+
+
+
 
   const fetchItems = () => {
     axios.get(apiKey.authentication)
@@ -36,9 +45,34 @@ export default function Home() {
       gender: item.gender
     })
       .then(() => {
+        axios
+        .get(`${apiKey.getuserbyid}/${item.userid}`)
+        .then((data) => {
+          setUser(data.data.data);
+        })
+        .catch(() => {});
         // بعد از تایید، دوباره آیتم‌ها رو از سرور بگیر
         fetchItems()
         setSelectedItem(null)
+        axios.post(
+          "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+          {
+            code: "ljuy7t72ldd1pad",
+            sender: "+983000505",
+            recipient: `+${user.number}`,
+            variable: {
+              name: `${user.name}`,
+            },
+          },
+          {
+            headers: {
+              accept: "application/json",
+              apikey:
+                "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+              "Content-Type": "application/json",
+            },
+          }
+        );
       })
       .catch((err) => {
         console.error('خطا در تایید:', err)

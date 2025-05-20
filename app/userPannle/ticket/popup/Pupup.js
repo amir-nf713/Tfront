@@ -3,30 +3,67 @@ import apiKey from "@/app/API";
 import { data } from "autoprefixer";
 import axios from "axios";
 import Cookies from "js-cookie";
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 export default function Popup({ isOpen, onClose }) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
 
+  const [user, setUser] = useState([]);
+
+  const getCookie = useCallback((name) => {
+    return Cookies.get(name) || null;
+  }, []);
+
+  const loginCookieValue = getCookie("login");
+useEffect(() => {
+  axios
+    .get(`${apiKey.getuserbyid}/${loginCookieValue}`)
+    .then((data) => {
+      setUser(data.data.data);
+    })
+    .catch(() => {});
+}, []);
+
   if (!isOpen) return null;
 
   const handleSubmit = () => {
-    const loginCookieValue = Cookies.get("login") || null;
+    
 
-    if (title.length > 2) {
+    if (title.length > 0) {
       axios.post(apiKey.ticket, {
         title: title,
         description: description,
         userid: loginCookieValue
       }).then(data => {
-        if (title.length > 2) {
+        if (title.length > 0) {
           axios.post(apiKey.tickettext, {
             text: description,
             ticketid: data.data.save._id,
             rol: "user"
           });
         }
+const randomCode = Math.floor(Math.random() * 10000)
+        axios.post(
+          "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+          {
+            code: "xplxdsfvg1cy1kn",
+            sender: "+983000505",
+            recipient: `+${user.number}`,
+            variable: {
+              code: randomCode,
+            },
+          },
+          {
+            headers: {
+              accept: "application/json",
+              apikey:
+                "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+              "Content-Type": "application/json",
+            },
+          }
+        );
+    
          
       }).catch(err => {})
     }
