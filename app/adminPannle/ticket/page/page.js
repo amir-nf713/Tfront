@@ -1,5 +1,5 @@
 "use client";
-import { Suspense } from 'react';
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
@@ -8,9 +8,37 @@ import apiKey from "@/app/API";
 function TicketChatPage() {
   const searchParams = useSearchParams();
   const ticketId = searchParams.get("id");
+  const [users, setUsers] = useState([]);
 
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
+
+
+  axios.get(`${apiKey.ticket}`).then((res) => {
+    res.data.data.some((element) => {
+      if (element._id === ticketId) {
+       
+
+        
+          axios
+            .get(`${apiKey.getuserbyid}/${element.userid} `)
+            .then((res) => {
+              
+              
+              setUsers(res.data.data);
+            })
+            .catch((err) => {
+              console.error("خطا در دریافت کاربران:", err);
+            });
+        
+
+
+        return true;
+      }
+    });
+  });
+
+
 
   useEffect(() => {
     if (!ticketId) return;
@@ -49,8 +77,34 @@ function TicketChatPage() {
       .catch((err) => {
         console.error("خطا در ارسال یا دریافت پیام:", err);
       });
+
+      axios.post(
+        "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+        {
+          code: "3nyujl9x3yirqbh",
+          sender: "+983000505",
+          recipient: `+${users.number}`,
+          variable: {
+            name: users.name,
+          },
+        },
+        {
+          headers: {
+            accept: "application/json",
+            apikey:
+              "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+
+      
   };
 
+  
+  
+  
   return (
     <div className="flex flex-col h-screen max-h-screen bg-gray-100 p-4">
       <div className="bg-white rounded-lg shadow p-4 flex flex-col flex-1 overflow-hidden">
@@ -88,10 +142,6 @@ function TicketChatPage() {
     </div>
   );
 }
-
-
-
-
 
 export default function Page() {
   return (
