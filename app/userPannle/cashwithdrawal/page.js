@@ -92,7 +92,7 @@ export default function WithdrawalPanel() {
         
           // بروزرسانی کیف پول
           await axios.put(`${apiKey.putuser}/${user._id}`, {
-            wallet: walletBalance - withdrawAmount,
+            wallet: walletBalance + withdrawAmount,
           });
   
           // ارسال درخواست برداشت وجه

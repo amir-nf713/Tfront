@@ -100,11 +100,11 @@ export default function RootLayout({ children }) {
             </div>
 
             <div className="flex max-Wide-mobile-s:text-xs flex-row font-bold text-lg mt-10 w-full items-center justify-between px-3">
-              <div className="flex justify-center items-center text-[#CCCCCC]">
-                <span className=""> موجودی : </span>
+              <div className="flex justify-center items-center gap-2.5 text-[#CCCCCC]">
+                <span className="text-sm"> وجه برداشت شده تا کنون : </span>
                 <span className="">
-                  {" "}
-                  {(user.wallet * 1).toLocaleString()} تومان
+                 
+                   {(user.wallet * 1).toLocaleString()} {" "} تومان
                 </span>
               </div>
               

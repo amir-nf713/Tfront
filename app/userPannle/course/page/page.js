@@ -9,13 +9,11 @@ import { MdKeyboardArrowLeft } from "react-icons/md";
 
 function Page() {
   const [openIndex, setOpenIndex] = useState(null);
-
-  const toggleVideo = (index) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-  const [course, setcourse] = useState([]);
-  const [video, setvideo] = useState([]);
-  const [usercours, setusercours] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [course, setCourse] = useState(null);
+  const [videos, setVideos] = useState([]);
+  const [userCourses, setUserCourses] = useState([]);
 
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
@@ -27,130 +25,171 @@ function Page() {
   const loginCookieValue = getCookie("login");
 
   useEffect(() => {
-    axios
-      .get(`${apiKey.course}/${id}`)
-      .then((data) => {
-        setcourse(data.data.data);
-      })
-      .catch(() => {});
-  }, []);
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const [courseRes, videosRes, userCoursesRes] = await Promise.all([
+          axios.get(`${apiKey.course}/${id}`),
+          axios.get(`${apiKey.video}`),
+          axios.get(`${apiKey.userscourse}/${loginCookieValue}`),
+        ]);
 
-  useEffect(() => {
-    axios
-      .get(`${apiKey.video}`)
-      .then((data) => {
-        setvideo(data.data.data);
-      })
-      .catch(() => {});
-  }, []);
+        setCourse(courseRes.data.data);
+        setVideos(videosRes.data.data);
+        setUserCourses(userCoursesRes.data.data);
+      } catch (err) {
+        setError("خطا در دریافت اطلاعات. لطفاً دوباره تلاش کنید.");
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  useEffect(() => {
-    axios
-      .get(`${apiKey.userscourse}/${loginCookieValue}`)
-      .then((data) => {
-        setusercours(data.data.data);
-      })
-      .catch(() => {});
-  }, []);
+    if (id && loginCookieValue) fetchData();
+  }, [id, loginCookieValue]);
 
-  const hasBoughtCourse = usercours.some(
+  const hasBoughtCourse = userCourses.some(
     (item) => item.courseid == id && item.userid == loginCookieValue
   );
 
+  const buyCourse = async () => {
+    try {
+      await axios.post(apiKey.userscourse, {
+        userid: loginCookieValue,
+        courseid: id,
+      });
+      // Update user courses after purchase
+      const res = await axios.get(`${apiKey.userscourse}/${loginCookieValue}`);
+      setUserCourses(res.data.data);
+    } catch (err) {
+      setError("خطا در خرید دوره. لطفاً دوباره تلاش کنید.");
+      console.error(err);
+    }
+  };
+
+  const toggleVideo = (index) => {
+    if (hasBoughtCourse) {
+      setOpenIndex(openIndex === index ? null : index);
+    }
+  };
+
+  if (loading) return <div className="text-center py-8">در حال بارگذاری...</div>;
+  if (error) return <div className="text-center py-8 text-red-500">{error}</div>;
+  if (!course) return <div className="text-center py-8">دوره یافت نشد</div>;
+
   return (
-    <div className="w-full h-[98.7vh] mt-3 flex justify-center items-center">
-      <div className="w-[80%] max-Wide-mobile-4xl:flex-col flex-row-reverse rounded-2xl flex h-[800px] bg-white shadow-xl">
-        <div className="max-w-[600px] flex flex-col justify-between pb-3.5 items-center overflow-hidden bg-white  border-r">
-          <div className="flex justify-center items-center flex-col max-w-[600px] overflow-hidden bg-white">
+    <div className="w-full min-h-[98.7vh] py-8 flex justify-center items-start">
+      <div className="w-[80%] max-w-6xl flex flex-col lg:flex-row-reverse rounded-2xl bg-white shadow-xl">
+        {/* Course Info Section */}
+        <div className="lg:max-w-[400px] w-full flex flex-col justify-between p-4 border-b lg:border-b-0 lg:border-r">
+          <div>
             <img
-              src="/images.png" //course.photo
+              src={course.photo}
               alt={course.title}
-              className="w-11/12 rounded-3xl mt-5 max-Wide-mobile-4xl:h-64 max-tablet-l:h-44 h-60 object-cover"
+              className="size-auto rounded-2xl  object-cover"
             />
             <div className="p-4">
-              <h3 className="font-bold max-tablet-l:text-sm text-lg text-gray-800 mb-1">
+              <h3 className="font-bold text-lg text-gray-800 mb-2">
                 {course.title}
               </h3>
-              <p className="text-sm max-tablet-l:text-xs text-gray-600 leading-relaxed line-clamp-2">
+              <p className="text-sm text-gray-600 mb-4 line-clamp-3">
                 {course.explanation}
               </p>
 
-              <div className="flex justify-between items-center mt-4 text-sm text-gray-500">
+              <div className="flex justify-between items-center mb-2 text-sm">
                 <div className="flex items-center gap-1">
                   <Star className="w-4 h-4 text-yellow-400" fill="#facc15" />
-                  <span className="text-yellow-600 font-bold">{5.0}</span>
+                  <span className="text-yellow-600 font-bold">5.0</span>
                 </div>
-                <span>{course.teachersname}</span>
+                <span className="text-gray-500">{course.teachersname}</span>
               </div>
 
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-green-600 font-bold max-tablet-l:text-sm text-lg">
+              <div className="flex justify-between items-center">
+                <span className="text-green-600 font-bold text-lg">
                   {(course.price * 1).toLocaleString("fa-IR")} تومان
                 </span>
-                <div className="flex items-center gap-1 text-gray-500 max-tablet-l:text-sm">
+                <div className="flex items-center gap-1 text-gray-500">
                   <Users className="w-4 h-4" />
-                  <span>{""}</span>
+                  <span>0</span>
                 </div>
               </div>
             </div>
           </div>
+
           {hasBoughtCourse ? (
             <button
               disabled
-              className="rounded-xl h-16 text-lg font-dorna w-[90%] disabled:bg-neutral-400 bg-gray-400 text-white  font-bold mt-2 py-2 "
+              className="rounded-xl h-12 w-full disabled:bg-gray-400 bg-gray-400 text-white font-bold py-2"
             >
               خریداری شده
             </button>
           ) : (
-            <button className="rounded-xl h-16 text-lg font-dorna w-[90%] bg-sky-500 text-white  font-bold mt-2 py-2">
-              خرید
+            <button
+              onClick={buyCourse}
+              className="rounded-xl h-12 w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 transition-colors"
+            >
+              خرید دوره
             </button>
           )}
         </div>
 
-        <div className="w-full">
-          {video
-            .filter((videoItem) => videoItem.courseid == id && hasBoughtCourse)
-            .map((data, index) => (
-              <div key={index} className="w-full">
+        {/* Videos Section */}
+        <div className="flex-1 p-4 overflow-y-auto max-h-[800px]">
+          {videos
+            .filter((video) => video.courseid == id)
+            .map((video, index) => {
+              console.log(video.video);
+              
+              return (
+
+              <div key={video.id || index} className="mb-4">
                 <div
                   onClick={() => toggleVideo(index)}
-                  className="flex justify-between items-center px-4 py-3 mb-2 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer"
+                  className={`flex justify-between items-center px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ${
+                    hasBoughtCourse ? "cursor-pointer" : "cursor-not-allowed"
+                  }`}
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-8 h-8 bg-sky-500 text-white flex items-center justify-center rounded-full font-bold">
                       {index + 1}
                     </div>
-                    <div className="text-gray-800 font-medium text-base">
-                      {data.videotitle}
+                    <div className="text-gray-800 font-medium">
+                      {video.videotitle}
                     </div>
                   </div>
-                  <div className="text-sky-500 hover:text-sky-700 text-2xl transition-colors duration-200">
-                    <MdKeyboardArrowLeft />
-                  </div>
+                  <MdKeyboardArrowLeft
+                    className={`text-2xl transition-transform ${
+                      openIndex === index ? "rotate-90" : ""
+                    } ${hasBoughtCourse ? "text-sky-500" : "text-gray-400"}`}
+                  />
                 </div>
 
-                {openIndex === index && (
-                  <div className="mb-4 px-4">
+                {openIndex === index && hasBoughtCourse && (
+                  <div className="mt-2 px-4">
                     <video
-                      src={data.video}
+                      src={`${video.video}`}
                       controls
-                      className="w-full -z-10 max-h-[400px] rounded-xl shadow-md"
+                      className="w-full max-h-[400px] rounded-xl shadow-md"
                     />
                   </div>
                 )}
               </div>
-            ))}
+              )
+
+            }
+
+            
+            
+            )}
         </div>
       </div>
     </div>
   );
 }
 
-
-export default function Pdage() {
+export default function CoursePage() {
   return (
-    <Suspense fallback={<div>در حال بارگذاری...</div>}>
+    <Suspense fallback={<div className="text-center py-8">در حال بارگذاری...</div>}>
       <Page />
     </Suspense>
   );

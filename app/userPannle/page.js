@@ -265,17 +265,13 @@ export default function UserProfile() {
 
           <div className="flex max-tablet-l:w-11/12 max-desktop-s:w-[700px] max-desktop-s:h-auto max-desktop-s:mb-5 flex-col max-desktop-s:mt-5 justify-between h-[550px] w-[495px]">
             <div className="rounded-2xl bg-white flex flex-col justify-around items-center shadow-xl w-full h-64">
+              <h1>وجه برداشت شده از تدریس یار تا کنون</h1>
               <div className="w-[95%] gap-1.5 text-white text-2xl font-extrabold flex justify-center items-center rounded-2xl h-1/2 bg-sky-300">
                 <span className="">{(user.wallet * 1).toLocaleString()}</span>
 
                 <span className=""> تومان </span>
               </div>
-              <div className="flex flex-row justify-center items-center bg-[#A2FFAD] text-[#05cf2a] text-xl font-bold px-3 py-2 rounded-full">
-                <span className="">{(user.deposit * 1).toLocaleString()}</span>
-                <span className="">
-                  <GoArrowDown />
-                </span>
-              </div>
+             
             </div>
             <div className=" max-desktop-s:hidden rounded-2xl bg-sky-300 shadow-xl w-full h-64"></div>
           </div>
