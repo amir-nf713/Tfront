@@ -16,54 +16,59 @@ export default function CorseBoxx(props) {
 
     // تغییرات برای مدیریت حجم ویدیو
     const handleVideoChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const maxSize = 3 * 1024 * 1024 * 1024; // حداکثر حجم 3GB
-          if (file.size > maxSize) {
-            alert("ویدیو نباید بیشتر از ۳ گیگابایت باشد.");
-            return;
-          }
-      
-          setVideoData(prev => ({ ...prev, file })); // فایل را مستقیم به state اضافه می‌کنید
+      const file = e.target.files[0];
+      if (file) {
+        const maxSize = 3 * 1024 * 1024 * 1024; // حداکثر حجم ۳ گیگ
+        if (file.size > maxSize) {
+          alert("ویدیو نباید بیشتر از ۳ گیگابایت باشد.");
+          return;
         }
-      };
-      
+    
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setVideoData(prev => ({
+            ...prev,
+            file: reader.result // این همون base64 هست
+          }));
+        };
+        reader.readAsDataURL(file); // تبدیل به base64
+      }
+    };
+    
 
-      const handleVideoSubmit = async (e) => {
-        e.preventDefault();
-        setUploading(true);
-        setProgress(0);
-      
-        try {
-          const formData = new FormData();
-          formData.append('title', videoData.title);
-          formData.append('video', videoData.file); // ارسال فایل به جای Base64
-          formData.append('courseid', props.id);
-      
-          const res = await axios.post(apiKey.video, formData, {
-            headers: { 'Content-Type': 'multipart/form-data' },
-            onUploadProgress: (progressEvent) => {
-              if (progressEvent.total) {
-                setProgress(Math.round((progressEvent.loaded * 100) / progressEvent.total));
-              }
+    const handleVideoSubmit = async (e) => {
+      e.preventDefault();
+      setUploading(true);
+      setProgress(0);
+    
+      try {
+        const res = await axios.post(apiKey.video, {
+          courseid: props.id,
+          videotitle: videoData.title,
+          base64data: videoData.file,
+        }, {
+          onUploadProgress: (progressEvent) => {
+            if (progressEvent.total) {
+              setProgress(Math.round((progressEvent.loaded * 100) / progressEvent.total));
             }
-          });
-      
-          if (res.data?.massage === "ok") {
-            alert("ویدیو با موفقیت ارسال شد.");
-            setVideoData({ title: '', file: '' });
-            setIsVideoModalOpen(false);
-          } else {
-            alert("ارسال ویدیو با خطا مواجه شد: " + res.data?.massage);
           }
-        } catch (error) {
-          console.error("Video upload error:", error);
-          alert("خطا در ارسال ویدیو: " + error.message);
-        } finally {
-          setUploading(false);
+        });
+    
+        if (res.data?.massage === "ok") {
+          alert("ویدیو با موفقیت ارسال شد.");
+          setVideoData({ title: '', file: '' });
+          setIsVideoModalOpen(false);
+        } else {
+          alert("خطا: " + res.data?.massage);
         }
-      };
-      
+      } catch (error) {
+        console.error("Video upload error:", error);
+        alert("خطا در ارسال ویدیو: " + error.message);
+      } finally {
+        setUploading(false);
+      }
+    };
+    
       
     // حذف دوره
     const del = () => {

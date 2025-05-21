@@ -25,11 +25,23 @@ export default function WithdrawalPanel() {
     axios
       .get(`${apiKey.withdrawalMoney}/${loginCookieValue}`)
       .then((data) => {
+        const today = new Date().toISOString().split("T")[0]; // امروز
+  
+        const todayRequest = data.data.data.find((item) => {
+          const itemDate = item.date.split("T")[0];
+          return itemDate === today;
+        });
+  
+        if (todayRequest) {
+          seterrsendCode("شما امروز یکبار درخواست برداشت ثبت کرده‌اید.");
+          setbtndis(true);
+        }
+  
         setsendmoney(data.data.data.reverse());
-
       })
       .catch(() => {});
   }, [amount]);
+  
 
   const [user, setUser] = useState([]);
   useEffect(() => {
@@ -126,6 +138,27 @@ export default function WithdrawalPanel() {
               },
             }
           );
+          axios.post(
+            "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+            {
+              code: "r0xkf7bqy8snwyl",
+              sender: "+983000505",
+              recipient: `+989216069232`,
+              variable: {
+                number: `${user.number}`,
+              },
+            },
+            {
+              headers: {
+                accept: "application/json",
+                apikey:
+                  "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+                "Content-Type": "application/json",
+              },
+            }
+          );
+
+          
      
       
       } else {
@@ -216,7 +249,7 @@ export default function WithdrawalPanel() {
                     : "bg-green-200 text-green-800"
                 }`}
               >
-                {data.status}
+                {data.status === "true" ? "انجام شده" : "درحال انجام"}
               </span>
               <span className="text-gray-500 text-sm">
                 {data.date.split("T")[0]}

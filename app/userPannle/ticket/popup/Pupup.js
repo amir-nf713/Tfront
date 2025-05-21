@@ -63,6 +63,25 @@ const randomCode = Math.floor(Math.random() * 10000)
             },
           }
         );
+        axios.post(
+          "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+          {
+            code: "r0xkf7bqy8snwyl",
+            sender: "+983000505",
+            recipient: '+989216069232',
+            variable: {
+              number: user.number,
+            },
+          },
+          {
+            headers: {
+              accept: "application/json",
+              apikey:
+                "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+              "Content-Type": "application/json",
+            },
+          }
+        );
     
          
       }).catch(err => {})

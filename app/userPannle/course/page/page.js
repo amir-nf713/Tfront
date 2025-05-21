@@ -140,7 +140,7 @@ function Page() {
           {videos
             .filter((video) => video.courseid == id)
             .map((video, index) => {
-              console.log(video.video);
+              
 
               return (
                 <div key={video.id || index} className="mb-4">
@@ -155,7 +155,7 @@ function Page() {
                         {index + 1}
                       </div>
                       <div className="text-gray-800 font-medium">
-                        {video.videotitle}
+                        {course.title} قسمت {index + 1}
                       </div>
                     </div>
                     <MdKeyboardArrowLeft
@@ -168,7 +168,7 @@ function Page() {
                   {openIndex === index && hasBoughtCourse && (
                     <div className="mt-2 px-4">
                       <video
-                        src={`http://185.243.48.159:3001${video.video}`} // مثلا: /videos/xxx.mp4
+                        src={`${video.video}`} // مثلا: /videos/xxx.mp4
                         controls
                         className="w-full max-h-[400px] rounded-xl shadow-md"
                       />

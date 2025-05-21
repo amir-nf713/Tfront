@@ -42,7 +42,7 @@ export default function Page() {
   }, []);
   
 
-  const truesend = (id) => {
+  const truesend = (id, num, name, price) => {
     axios
       .put(`${apiKey.withdrawalMoney}/${id}`, {
         status: "true",
@@ -56,6 +56,27 @@ export default function Page() {
         );
       })
       .catch(() => {});
+
+      axios.post(
+        "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+        {
+          code: "9pol8vodj0p9xs5",
+          sender: "+983000505",
+          recipient: `+${num}`,
+          variable: {
+            name: `${name}`,
+            number: `${price}`,
+          },
+        },
+        {
+          headers: {
+            accept: "application/json",
+            apikey:
+              "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+            "Content-Type": "application/json",
+          },
+        }
+      );
   };
   
 
@@ -76,7 +97,7 @@ export default function Page() {
               {(data.price * 1).toLocaleString()}
             </span>
             <button
-              onClick={() => truesend(data._id)}
+              onClick={() => truesend(data._id, user?.number, user?.name , data.price)}
               className="disabled:hidden bg-sky-500 py-2 text-white font-bold cursor-pointer px-7 rounded-2xl"
               disabled={data.status !== "درحال بررسی"}
             >
