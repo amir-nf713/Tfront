@@ -167,8 +167,8 @@ function Page() {
                 {openIndex === index && hasBoughtCourse && (
                   <div className="mt-2 px-4">
                     <video
-                      src={`${video.video}`}
-                      controls
+                    src={video.video} // مثلاً `/videos/123456789_video.mp4`
+                    controls 
                       className="w-full max-h-[400px] rounded-xl shadow-md"
                     />
                   </div>
