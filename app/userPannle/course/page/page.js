@@ -73,8 +73,10 @@ function Page() {
     }
   };
 
-  if (loading) return <div className="text-center py-8">در حال بارگذاری...</div>;
-  if (error) return <div className="text-center py-8 text-red-500">{error}</div>;
+  if (loading)
+    return <div className="text-center py-8">در حال بارگذاری...</div>;
+  if (error)
+    return <div className="text-center py-8 text-red-500">{error}</div>;
   if (!course) return <div className="text-center py-8">دوره یافت نشد</div>;
 
   return (
@@ -139,48 +141,42 @@ function Page() {
             .filter((video) => video.courseid == id)
             .map((video, index) => {
               console.log(video.video);
-              
+
               return (
-
-              <div key={video.id || index} className="mb-4">
-                <div
-                  onClick={() => toggleVideo(index)}
-                  className={`flex justify-between items-center px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ${
-                    hasBoughtCourse ? "cursor-pointer" : "cursor-not-allowed"
-                  }`}
-                >
-                  <div className="flex items-center gap-4">
-                    <div className="w-8 h-8 bg-sky-500 text-white flex items-center justify-center rounded-full font-bold">
-                      {index + 1}
+                <div key={video.id || index} className="mb-4">
+                  <div
+                    onClick={() => toggleVideo(index)}
+                    className={`flex justify-between items-center px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ${
+                      hasBoughtCourse ? "cursor-pointer" : "cursor-not-allowed"
+                    }`}
+                  >
+                    <div className="flex items-center gap-4">
+                      <div className="w-8 h-8 bg-sky-500 text-white flex items-center justify-center rounded-full font-bold">
+                        {index + 1}
+                      </div>
+                      <div className="text-gray-800 font-medium">
+                        {video.videotitle}
+                      </div>
                     </div>
-                    <div className="text-gray-800 font-medium">
-                      {video.videotitle}
-                    </div>
-                  </div>
-                  <MdKeyboardArrowLeft
-                    className={`text-2xl transition-transform ${
-                      openIndex === index ? "rotate-90" : ""
-                    } ${hasBoughtCourse ? "text-sky-500" : "text-gray-400"}`}
-                  />
-                </div>
-
-                {openIndex === index && hasBoughtCourse && (
-                  <div className="mt-2 px-4">
-                    <video
-                    src={video.video} // مثلاً `/videos/123456789_video.mp4`
-                    controls 
-                      className="w-full max-h-[400px] rounded-xl shadow-md"
+                    <MdKeyboardArrowLeft
+                      className={`text-2xl transition-transform ${
+                        openIndex === index ? "rotate-90" : ""
+                      } ${hasBoughtCourse ? "text-sky-500" : "text-gray-400"}`}
                     />
                   </div>
-                )}
-              </div>
-              )
 
-            }
-
-            
-            
-            )}
+                  {openIndex === index && hasBoughtCourse && (
+                    <div className="mt-2 px-4">
+                      <video
+                        src={`http://185.243.48.159:3001${video.video}`} // مثلا: /videos/xxx.mp4
+                        controls
+                        className="w-full max-h-[400px] rounded-xl shadow-md"
+                      />
+                    </div>
+                  )}
+                </div>
+              );
+            })}
         </div>
       </div>
     </div>
@@ -189,7 +185,9 @@ function Page() {
 
 export default function CoursePage() {
   return (
-    <Suspense fallback={<div className="text-center py-8">در حال بارگذاری...</div>}>
+    <Suspense
+      fallback={<div className="text-center py-8">در حال بارگذاری...</div>}
+    >
       <Page />
     </Suspense>
   );
