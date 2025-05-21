@@ -65,10 +65,26 @@ function Page() {
       setError("خطا در خرید دوره. لطفاً دوباره تلاش کنید.");
       console.error(err);
     }
+
+    // try {
+    //   const response = await axios.post(apiKey.pay, {
+    //     courseId : id,
+    //     title : course.title,
+    //     userId: loginCookieValue,
+    //   });
+    //   if (response.data.url) {
+    //     // در اینجا شما کاربر رو به صفحه پرداخت زرین‌پال هدایت می‌کنید
+    //     window.location.href = response.data.url;
+    //   } else {
+    //     alert("مشکلی در ارسال درخواست پرداخت پیش آمده است.");
+    //   }
+    // } catch (error) {
+    //   console.error("خطا در درخواست پرداخت:", error);
+    // }
   };
 
   const toggleVideo = (index) => {
-    if (hasBoughtCourse) {
+    if (hasBoughtCourse || index === 0) {
       setOpenIndex(openIndex === index ? null : index);
     }
   };
@@ -112,7 +128,7 @@ function Page() {
                 </span>
                 <div className="flex items-center gap-1 text-gray-500">
                   <Users className="w-4 h-4" />
-                  <span>0</span>
+                  <span>160</span>
                 </div>
               </div>
             </div>
@@ -140,14 +156,12 @@ function Page() {
           {videos
             .filter((video) => video.courseid == id)
             .map((video, index) => {
-              
-
               return (
                 <div key={video.id || index} className="mb-4">
                   <div
                     onClick={() => toggleVideo(index)}
                     className={`flex justify-between items-center px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ${
-                      hasBoughtCourse ? "cursor-pointer" : "cursor-not-allowed"
+                      hasBoughtCourse || index === 0 ? "cursor-pointer" : "cursor-not-allowed"
                     }`}
                   >
                     <div className="flex items-center gap-4">
@@ -158,17 +172,22 @@ function Page() {
                         {course.title} قسمت {index + 1}
                       </div>
                     </div>
+                    <div className="flex flex-row">
+
+                    <div className={`${hasBoughtCourse || index === 0 ? "text-green-500" : "text-gray-400"}`}>{index === 0 ? " رایگان" : ""}</div>
                     <MdKeyboardArrowLeft
                       className={`text-2xl transition-transform ${
                         openIndex === index ? "rotate-90" : ""
-                      } ${hasBoughtCourse ? "text-sky-500" : "text-gray-400"}`}
+                      } ${hasBoughtCourse || index === 0 ? "text-green-500" : "text-gray-400"}`}
                     />
+                    
+                    </div>
                   </div>
 
-                  {openIndex === index && hasBoughtCourse && (
+                  {openIndex === index && (hasBoughtCourse || index === 0) && (
                     <div className="mt-2 px-4">
                       <video
-                        src={`${video.video}`} // مثلا: /videos/xxx.mp4
+                        src={`${video.video}`}
                         controls
                         className="w-full max-h-[400px] rounded-xl shadow-md"
                       />

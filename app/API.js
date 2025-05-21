@@ -19,6 +19,7 @@ const apiKey = ({
   deletuser : `${Url}/deletuser`, // id
   usd : `${Url}/usd`, // id
   eur : `${Url}/eur`, // id
+  pay : `${Url}/pay`, // id
   
 });
 

@@ -30,7 +30,7 @@ export default function CorseBox(props) {
               </span>
               <div className="flex items-center gap-1 text-gray-500 max-Wide-mobile-xsl:text-sm">
                 <Users className="w-4 h-4" />
-                <span>{props.students}</span>
+                <span>{"160"}</span>
               </div>
             </div>
           </div>
