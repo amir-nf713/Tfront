@@ -25,28 +25,38 @@ function Page() {
   const loginCookieValue = getCookie("login");
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCourseAndUser = async () => {
       try {
         setLoading(true);
-        const [courseRes, videosRes, userCoursesRes] = await Promise.all([
+        const [courseRes, userCoursesRes] = await Promise.all([
           axios.get(`${apiKey.course}/${id}`),
-          axios.get(`${apiKey.video}`),
           axios.get(`${apiKey.userscourse}/${loginCookieValue}`),
         ]);
-
         setCourse(courseRes.data.data);
-        setVideos(videosRes.data.data);
         setUserCourses(userCoursesRes.data.data);
       } catch (err) {
         setError("خطا در دریافت اطلاعات. لطفاً دوباره تلاش کنید.");
-        console.error(err);
       } finally {
         setLoading(false);
       }
     };
-
-    if (id && loginCookieValue) fetchData();
+  
+    if (id && loginCookieValue) fetchCourseAndUser();
   }, [id, loginCookieValue]);
+  
+  useEffect(() => {
+    const fetchVideos = async () => {
+      try {
+        const videosRes = await axios.get(`${apiKey.video}/course/${id}`);
+        setVideos(videosRes.data.data);
+      } catch (err) {
+        console.error("خطا در دریافت ویدیوها:", err);
+      }
+    };
+  
+    if (id) fetchVideos();
+  }, [id]);
+  
 
   const hasBoughtCourse = userCourses.some(
     (item) => item.courseid == id && item.userid == loginCookieValue
