@@ -73,7 +73,6 @@ function Page() {
       });
   
       if (response.data.url) {
-        // کاربر به درگاه زرین‌پال منتقل شود
         window.location.href = response.data.url;
       } else {
         setError("مشکلی در ارسال درخواست پرداخت پیش آمده است.");
@@ -83,6 +82,7 @@ function Page() {
       setError("خطا در درخواست پرداخت. لطفاً مجدداً تلاش کنید.");
     }
   };
+  
   
 
   const toggleVideo = (index) => {
