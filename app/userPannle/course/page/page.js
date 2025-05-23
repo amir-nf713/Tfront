@@ -62,11 +62,13 @@ function Page() {
     (item) => item.courseid == id && item.userid == loginCookieValue
   );
 
+ 
+  
   const buyCourse = async () => {
     try {
       const response = await axios.post(apiKey.pay, {
         courseId: id,
-        title: course.title,
+        title: "تدریس یار",
         userId: loginCookieValue,
       });
   
