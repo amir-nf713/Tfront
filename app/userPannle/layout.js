@@ -9,9 +9,21 @@ import { IoMenu } from "react-icons/io5";
 import { MdClose } from "react-icons/md";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { useLoginCheck } from "../myhook/cookiesHook";
+
 
 export default function RootLayout({ children }) {
+  const getCookie = useCallback((name) => {
+    return Cookies.get(name) || null;
+  }, []);
+  const loginCookieValue = getCookie("login");
   const router = useRouter();
+  
+
+  const { getCookieSafe } = useLoginCheck();
+
+  const loginCookie = getCookieSafe("login");
+  if (!loginCookie) return null; // تا وقتی ریدایرکت نشده، چیزی نشون نده
   const handleRemoveCookie = () => {
     Cookies.remove("login");
     router.push("/");
@@ -21,14 +33,8 @@ export default function RootLayout({ children }) {
   const [menu, setmenu] = useState("-right-96");
   const [Popup, setPopup] = useState("hidden");
 
-  const getCookie = useCallback((name) => {
-    return Cookies.get(name) || null;
-  }, []);
+ 
 
-  const loginCookieValue = getCookie("login");
-  if (!loginCookieValue) {
-    router.push("/");
-  }
   useEffect(() => {
     axios
       .get(`${apiKey.getuserbyid}/${loginCookieValue}`)

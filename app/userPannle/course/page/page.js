@@ -54,34 +54,24 @@ function Page() {
 
   const buyCourse = async () => {
     try {
-      await axios.post(apiKey.userscourse, {
-        userid: loginCookieValue,
-        courseid: id,
+      const response = await axios.post(apiKey.pay, {
+        courseId: id,
+        title: course.title,
+        userId: loginCookieValue,
       });
-      // Update user courses after purchase
-      const res = await axios.get(`${apiKey.userscourse}/${loginCookieValue}`);
-      setUserCourses(res.data.data);
-    } catch (err) {
-      setError("خطا در خرید دوره. لطفاً دوباره تلاش کنید.");
-      console.error(err);
+  
+      if (response.data.url) {
+        // کاربر به درگاه زرین‌پال منتقل شود
+        window.location.href = response.data.url;
+      } else {
+        setError("مشکلی در ارسال درخواست پرداخت پیش آمده است.");
+      }
+    } catch (error) {
+      console.error("خطا در درخواست پرداخت:", error);
+      setError("خطا در درخواست پرداخت. لطفاً مجدداً تلاش کنید.");
     }
-
-    // try {
-    //   const response = await axios.post(apiKey.pay, {
-    //     courseId : id,
-    //     title : course.title,
-    //     userId: loginCookieValue,
-    //   });
-    //   if (response.data.url) {
-    //     // در اینجا شما کاربر رو به صفحه پرداخت زرین‌پال هدایت می‌کنید
-    //     window.location.href = response.data.url;
-    //   } else {
-    //     alert("مشکلی در ارسال درخواست پرداخت پیش آمده است.");
-    //   }
-    // } catch (error) {
-    //   console.error("خطا در درخواست پرداخت:", error);
-    // }
   };
+  
 
   const toggleVideo = (index) => {
     if (hasBoughtCourse || index === 0) {

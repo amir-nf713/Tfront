@@ -6,8 +6,20 @@ import Cookies from "js-cookie";
 import { GoArrowDown } from "react-icons/go";
 import { useRouter } from "next/navigation";
 import { data } from "autoprefixer";
+// import { useLoginCheck } from "../myhook/cookiesHook";
 
 export default function UserProfile() {
+  const getCookie = useCallback((name) => {
+    return Cookies.get(name) || null;
+  }, []);
+  const loginCookieValue = getCookie("login");
+  const router = useRouter();
+
+  // const { getCookieSafe } = useLoginCheck();
+
+  // const loginCookie = getCookieSafe("login");
+  // if (!loginCookie) return null; // تا وقتی ریدایرکت نشده، چیزی نشون نده
+  
   const [user, setUser] = useState(null);
   const [USD, setUSD] = useState(null);
   const [EUR, seEUR] = useState(null);
@@ -21,7 +33,7 @@ export default function UserProfile() {
   const [ticketUtextcolor, setticketUtextcolor] = useState("");
   const [ticketUbgcolor, setticketUbgcolor] = useState("");
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  // const router = useRouter();
   const calculateUserAge = useCallback((createdDate) => {
     if (!createdDate) return "نامشخص";
 
@@ -54,13 +66,11 @@ export default function UserProfile() {
     }
   }, []);
 
-  const getCookie = useCallback((name) => {
-    return Cookies.get(name) || null;
-  }, []);
+  
 
   useEffect(() => {
     const fetchUserData = async () => {
-      const loginCookieValue = getCookie("login");
+      // const loginCookieValue = getCookie("login");
       if (!loginCookieValue) return;
       try {
         const response = await axios.get(
@@ -100,7 +110,7 @@ export default function UserProfile() {
 
   useEffect(() => {
     const fetchData = async () => {
-      const loginCookieValue = getCookie("login");
+      // const loginCookieValue = getCookie("login");
       if (!loginCookieValue) return;
       try {
         const res = await axios.get(`${apiKey.ticket}/${loginCookieValue}`);
@@ -140,19 +150,36 @@ export default function UserProfile() {
 
   if (loading) {
     return (
-      <div className="w-full h-[100vh] flex justify-center items-center">
-        Loading...
+      <div className="w-full h-[100vh] flex flex-col justify-center items-center bg-blue-100 text-blue-700">
+        <svg
+          className="animate-spin -ml-1 mr-3 h-16 w-16 text-blue-600"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          />
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          />
+        </svg>
+        <p className="mt-4 text-2xl font-semibold tracking-wide">
+          لطفا صبر کنید...
+        </p>
       </div>
     );
   }
+  
+  
 
-  if (!user) {
-    return (
-      <div className="w-full h-[100vh] flex justify-center items-center">
-        User not found
-      </div>
-    );
-  }
 
   const userAge = calculateUserAge(user.date);
 

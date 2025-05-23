@@ -12,10 +12,12 @@ export default function page() {
     return Cookies.get(name) || null;
   }, []);
 
-  const login = getCookie("login");
-  if (login) {
-    router.push("/userPannle");
-  }
+  useEffect(() => {
+    const login = getCookie("login");
+    if (login) {
+      router.push("/userPannle");
+    }
+  }, [getCookie, router]);
 
   const [codeBox, setCodeBox] = useState("hidden");
   const [NumBox, setNumBox] = useState("flex");
@@ -24,21 +26,16 @@ export default function page() {
   const [err, seterr] = useState("");
   const [errsendCode, seterrsendCode] = useState("ارسال");
   const [loading, setloading] = useState(true);
-
-  
+  const [loginLoading, setLoginLoading] = useState(false);
 
   function setLoginCookie(userId) {
-    const days = 5;
-    const date = new Date();
-    date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
-    const expires = "expires=" + date.toUTCString();
-    document.cookie = `login=${userId}; ${expires}; path=/`;
+    Cookies.set("login", userId, { expires: 5, path: "/" });
   }
 
   const buttonhandler = () => {
     setloading(true);
     if (numinp === "9216069232") {
-      router.push("adminPannle");
+      router.push("/adminPannle");
     } else {
       axios
         .post(`${apiKey.sendsms}/+98${numinp}`)
@@ -52,11 +49,14 @@ export default function page() {
               setloading(false);
             }
           }
-          if (data.data.message === 'You have reached the limit of requests (5 per 5 minutes)') {
-           seterrsendCode("دسترسی شما تا دقایقی محدود شده")
-           setInterval(() => {
-            seterrsendCode("ارسال")
-           }, 120000);
+          if (
+            data.data.message ===
+            "You have reached the limit of requests (5 per 5 minutes)"
+          ) {
+            seterrsendCode("دسترسی شما تا دقایقی محدود شده");
+            setTimeout(() => {
+              seterrsendCode("ارسال");
+            }, 120000); // دو دقیقه
           }
         })
         .catch((errr) => {});
@@ -87,36 +87,27 @@ export default function page() {
   };
 
   const loginhanler = () => {
+    setLoginLoading(true); // ✅ شروع لودینگ
     axios
       .post(apiKey.login, {
         number: Number("98" + numinp),
         code: codeinp,
       })
       .then((data) => {
-      
-
-        if (data.data.massege === "ok") {
+        if (data.data.message === "ok" || data.data.login === "true") {
           const id = data.data.data._id;
           setLoginCookie(id);
-
           router.push("/userPannle");
-        }
-
-        if (data.data.massage === "data is false") {
+        } else if (data.data.message === "data is false") {
           seterr("کد اشتباه است");
-        }
-        
-        
-
-        if (data.data.login === "true") {
-          const id = data.data.data._id;
-          setLoginCookie(id);
-
-          router.push("/userPannle");
         }
       })
       .catch((er) => {
         console.log(er);
+        seterr("خطایی رخ داده است");
+      })
+      .finally(() => {
+        setLoginLoading(false); // ✅ پایان لودینگ (فقط اگر ارور داده یا کد اشتباه بود)
       });
   };
 
@@ -150,7 +141,10 @@ export default function page() {
               +98
             </div>
           </div>
-          <p className="font-light max-Wide-mobile-s:text-xs text-sm text-red-500 text-start w-[90%] pt-2"> - شماره را بدون صفر وارد کنید  : 0000-000-900</p>
+          <p className="font-light max-Wide-mobile-s:text-xs text-sm text-red-500 text-start w-[90%] pt-2">
+            {" "}
+            - شماره را بدون صفر وارد کنید : 0000-000-900
+          </p>
         </div>
 
         <div
@@ -188,11 +182,15 @@ export default function page() {
           {errsendCode}
         </button>
         <button
-          disabled={loading}
+          disabled={loading || loginLoading}
           onClick={loginhanler}
           className={`w-[97%] disabled:bg-gray-300 ${codeBox} justify-center items-center cursor-pointer h-12 rounded-lg bg-sky-500 text-white`}
         >
-          ورود | ثیت نام
+          {loginLoading ? (
+            <div className="w-5 h-5 border-2 border-white border-t-transparent animate-spin rounded-full"></div>
+          ) : (
+            "ورود | ثبت نام"
+          )}
         </button>
       </div>
     </div>

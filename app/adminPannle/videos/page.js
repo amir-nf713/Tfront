@@ -8,6 +8,8 @@ import Link from "next/link";
 export default function page() {
   const [course, setcourse] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false); // برای کنترل پاپ آپ
+  const [loading, setLoading] = useState(true);
+const [error, setError] = useState(null);
   const [newCourse, setNewCourse] = useState({
     title: '',
     description: '',
@@ -20,8 +22,12 @@ export default function page() {
     axios.get(apiKey.course)
       .then(data => {
         setcourse(data.data.data);
+        setLoading(false);
       })
-      .catch(() => { });
+      .catch(() => {
+        setError("خطا در دریافت دوره‌ها");
+        setLoading(false);
+      });
   }, []);
 
   // برای باز و بسته کردن پاپ آپ
@@ -90,6 +96,57 @@ export default function page() {
       alert("ارسال دوره با خطا مواجه شد.");
     }
   };
+
+
+  if (loading)
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-gray-600 space-y-4">
+        <svg
+          className="animate-spin h-12 w-12 text-blue-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <circle
+            className="opacity-25"
+            cx="12"
+            cy="12"
+            r="10"
+            stroke="currentColor"
+            strokeWidth="4"
+          ></circle>
+          <path
+            className="opacity-75"
+            fill="currentColor"
+            d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+          ></path>
+        </svg>
+        <p className="text-lg font-semibold">در حال بارگذاری...</p>
+      </div>
+    );
+  
+  if (error)
+    return (
+      <div className="flex flex-col items-center justify-center py-20 text-red-600 space-y-3 border border-red-400 bg-red-100 rounded-md max-w-md mx-auto">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-10 w-10"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M18.364 5.636l-12.728 12.728M5.636 5.636l12.728 12.728"
+          />
+        </svg>
+        <p className="text-center text-lg font-semibold">{error}</p>
+      </div>
+    );
+  
+
   
 
   return (

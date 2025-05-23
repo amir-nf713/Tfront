@@ -6,11 +6,20 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 
 export default function ProfileForm() {
-
-  const getCookie = useCallback((name) => {
-    return Cookies.get(name) || null;
-  }, []);
-
+  try {
+    const getCookie = useCallback((name) => {
+      return Cookies.get(name) || null;
+    }, []);
+  const loginCookieValue = getCookie("login");
+    if (!loginCookieValue) {
+      throw new Error("ارتباط با سرور برقرار نشد یا ورود شما معتبر نیست.");
+    }
+  } catch (error) {
+    alert(error.message); // یا استفاده از یک سیستم نوتیفیکیشن حرفه‌ای‌تر
+    router.push("/");
+  }
+  
+ 
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -37,7 +46,7 @@ export default function ProfileForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const loginCookieValue = getCookie("login");
+    
   
     // ساخت body بدون عکس
     const updatedData = {
