@@ -6,20 +6,12 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/navigation';
 
 export default function ProfileForm() {
-  try {
-    const getCookie = useCallback((name) => {
-      return Cookies.get(name) || null;
-    }, []);
-  const loginCookieValue = getCookie("login");
-    if (!loginCookieValue) {
-      throw new Error("ارتباط با سرور برقرار نشد یا ورود شما معتبر نیست.");
-    }
-  } catch (error) {
-    alert(error.message); // یا استفاده از یک سیستم نوتیفیکیشن حرفه‌ای‌تر
-    router.push("/");
-  }
-  
+  const { getCookieSafe } = useLoginCheck();
+
+  const loginCookie = getCookieSafe("login");
  
+  if (!loginCookie) return null; // یا یک spinner نمایش دهید
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -60,7 +52,7 @@ export default function ProfileForm() {
     }
   
     try {
-      await axios.put(`${apiKey.putuser}/${loginCookieValue}`, updatedData)
+      await axios.put(`${apiKey.putuser}/${loginCookie}`, updatedData)
       router.push("/userPannle")
     } catch (error) {
       alert('خطایی رخ داده است!')
