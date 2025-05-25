@@ -1,7 +1,7 @@
 "use client";
 import apiKey from "@/app/API";
 import axios from "axios";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import MenuBtn from "./componnet/menubtn/MenuBtn";
 import Link from "next/link";
 import Menu from "./componnet/menu/Menu";
@@ -27,13 +27,28 @@ export default function RootLayout({ children }) {
   const [menu, setmenu] = useState("-right-96");
   const [Popup, setPopup] = useState("hidden");
 
+  const menuRef = useRef(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setmenu("-right-96"); // بستن منو
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
   useEffect(() => {
     if (!loginCookie) return;
-  
+
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${apiKey.getuserbyid}/${loginCookie}`);
-  
+
         // بررسی امن و دقیق پاسخ
         const userData = res?.data?.data;
         if (!userData || userData === "not found") {
@@ -41,14 +56,14 @@ export default function RootLayout({ children }) {
           router.replace("/"); // بهتر است از replace استفاده کنید
           return;
         }
-  
+
         setUser(userData);
       } catch (error) {
         Cookies.remove("login");
         router.replace("/");
       }
     };
-  
+
     fetchUser();
   }, [loginCookie, router]);
 
@@ -78,6 +93,7 @@ export default function RootLayout({ children }) {
       </button>
       <div className="z-50">
         <div
+          ref={menuRef} 
           className={`overflow-x-auto max-Wide-mobile-s:w-60 h-[100vh] fixed top-0 ${menu} transition-all font-dorna w-96 flex flex-col items-center bg-[#3F3F46]`}
         >
           <button
@@ -130,12 +146,11 @@ export default function RootLayout({ children }) {
               <MenuBtn text="ویدیو ها"></MenuBtn>
             </Link>
 
-            <Link className="w-full" href={"/userPannle/ticket"}>
-              <MenuBtn text="تیکت ها"></MenuBtn>
-            </Link>
-
             <Link className="w-full" href={"/userPannle/cashwithdrawal"}>
               <MenuBtn text="برداشت وجه"></MenuBtn>
+            </Link>
+            <Link className="w-full" href={"/userPannle/ticket"}>
+              <MenuBtn text="تیکت ها"></MenuBtn>
             </Link>
 
             <Link className="w-full" href={"/userPannle/Contactus"}>

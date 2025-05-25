@@ -11,6 +11,8 @@ export default function UserForm() {
 
 
     const [user, setUser] = useState([]);
+    const [loading, setLoading] = useState(false);
+
 
   const getCookie = useCallback((name) => {
     return Cookies.get(name) || null;
@@ -66,6 +68,7 @@ useEffect(() => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await axios.post(apiKey.authentication,{
          userid : formData.userid,
@@ -117,6 +120,8 @@ useEffect(() => {
     
     } catch (err) {
       console.error("Error submitting form:", err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -134,6 +139,7 @@ useEffect(() => {
       {/* نام و نام خانوادگی */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <input
+        required
           type="text"
           name="name"
           placeholder="نام"
@@ -142,6 +148,7 @@ useEffect(() => {
           className="input"
         />
         <input
+        required
           type="text"
           name="lastname"
           placeholder="نام خانوادگی"
@@ -153,6 +160,7 @@ useEffect(() => {
 
       {/* کد ملی */}
       <input
+      required
         type="text"
         name="codemeli"
         placeholder="کد ملی"
@@ -163,6 +171,7 @@ useEffect(() => {
 
       {/* ایمیل و تایید ایمیل */}
       <input
+      required
         type="email"
         name="email"
         placeholder="ایمیل"
@@ -174,6 +183,7 @@ useEffect(() => {
       {/* تاریخ تولد */}
       <div className="grid grid-cols-3 gap-4">
         <input
+        required
           type="text"
           name="birthDay"
           placeholder="روز تولد"
@@ -182,6 +192,7 @@ useEffect(() => {
           className="input"
         />
         <input
+        required
           type="text"
           name="birthMonth"
           placeholder="ماه تولد"
@@ -190,6 +201,7 @@ useEffect(() => {
           className="input"
         />
         <input
+        required
           type="text"
           name="brthday"
           placeholder="سال تولد"
@@ -204,6 +216,7 @@ useEffect(() => {
         <span className="text-gray-700">جنسیت:</span>
         <label className="flex items-center gap-1">
           <input
+          required
             type="radio"
             name="gnder"
             value="مرد"
@@ -214,6 +227,7 @@ useEffect(() => {
         </label>
         <label className="flex items-center gap-1">
           <input
+          required
             type="radio"
             name="gnder"
             value="زن"
@@ -248,6 +262,7 @@ useEffect(() => {
             </svg>
             <span className="text-sm text-gray-500">آپلود تصویر</span>
             <input
+            required
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
@@ -267,11 +282,39 @@ useEffect(() => {
 
       {/* دکمه ارسال */}
       <button
-        type="submit"
-        className="w-full bg-blue-500 text-white py-3 rounded-xl hover:bg-blue-600 transition-all"
+  type="submit"
+  className="w-full bg-blue-500 text-white py-3 rounded-xl hover:bg-blue-600 transition-all flex justify-center items-center gap-2"
+  disabled={loading}
+>
+  {loading ? (
+    <>
+      <svg
+        className="animate-spin h-5 w-5 text-white"
+        xmlns="http://www.w3.org/2000/svg"
+        fill="none"
+        viewBox="0 0 24 24"
       >
-        ارسال اطلاعات
-      </button>
+        <circle
+          className="opacity-25"
+          cx="12"
+          cy="12"
+          r="10"
+          stroke="currentColor"
+          strokeWidth="4"
+        ></circle>
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8v8z"
+        ></path>
+      </svg>
+      <span>در حال ارسال...</span>
+    </>
+  ) : (
+    "ارسال اطلاعات"
+  )}
+</button>
+
     </form>
        <div className={`${okFaechdataa} justify-center items-center h-16 rounded-2xl w-60 bg-white shadow-xl`}>با موفقیت ارسال شد</div>
     </div>

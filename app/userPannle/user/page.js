@@ -53,12 +53,21 @@ export default function ProfileForm() {
     }
   
     try {
-      await axios.put(`${apiKey.putuser}/${loginCookie}`, updatedData)
-      router.push("/userPannle")
+      await axios.put(`${apiKey.putuser}/${loginCookie}`, updatedData, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      router.push("/userPannle");
     } catch (error) {
-      alert('خطایی رخ داده است!')
-      console.error(error)
+      await axios.put(`${apiKey.putuser}/${loginCookie}`, updatedData, {
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      router.push("/userPannle");
     }
+    
   }
   
 
