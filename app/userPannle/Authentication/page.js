@@ -5,6 +5,8 @@ import apiKey from "@/app/API";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { data } from "autoprefixer";
+import imageCompression from 'browser-image-compression';
+
 
 export default function UserForm() {
   const router = useRouter()
@@ -52,24 +54,42 @@ useEffect(() => {
     }));
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    const reader = new FileReader();
-    reader.onloadend = () => {
+  
+    try {
+      const options = {
+        maxSizeMB: 0.3, // حدود 300 کیلوبایت هدف
+        maxWidthOrHeight: 800, // حداکثر عرض یا ارتفاع
+        useWebWorker: true,
+      };
+  
+      const compressedFile = await imageCompression(file, options);
+      const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
+  
       setFormData((prev) => ({
         ...prev,
-        cartmeliphoto: reader.result,
+        cartmeliphoto: base64,
       }));
-    };
-    reader.readAsDataURL(file);
+    } catch (err) {
+      console.error("خطا در فشرده‌سازی عکس کارت ملی:", err);
+      alert("خطا در پردازش عکس کارت ملی");
+    }
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
+
+      if (formData.cartmeliphoto.length > 1_000_000) {
+        alert("حجم عکس کارت ملی خیلی بالاست. لطفاً عکس سبک‌تری انتخاب کنید.");
+        setLoading(false);
+        return;
+      }
+
       const res = await axios.post(apiKey.authentication,{
          userid : formData.userid,
          cartmeliphoto :formData.cartmeliphoto,
