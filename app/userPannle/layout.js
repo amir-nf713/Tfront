@@ -10,6 +10,7 @@ import { MdClose } from "react-icons/md";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 import { useLoginCheck } from "../myhook/cookiesHook";
+// import imageCompression from 'browser-image-compression';
 
 export default function RootLayout({ children }) {
   const router = useRouter();
@@ -129,37 +130,37 @@ export default function RootLayout({ children }) {
           </div>
 
           <div className="mt-5 max-Wide-mobile-s:w-[99%] w-[96%] flex flex-col justify-center items-center max-Wide-mobile-s:gap-0.5 gap-1">
-            <Link className="w-full" href={"/userPannle"}>
+            <Link className="w-full" onClick={Menuhandler} href={"/userPannle"}>
               <MenuBtn text="داشبورد"></MenuBtn>
             </Link>
             {user.Authentication === "false" ? (
-              <Link className="w-full" href={"/userPannle/Authentication"}>
+              <Link className="w-full" onClick={Menuhandler} href={"/userPannle/Authentication"}>
                 <MenuBtn text="احراز هویت"></MenuBtn>
               </Link>
             ) : (
               <></>
             )}
-            <Link className="w-full" href={"/userPannle/course"}>
+            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/course"}>
               <MenuBtn text="عضویت در تدریس یار"></MenuBtn>
             </Link>
-            <Link className="w-full" href={"/userPannle/userCourse"}>
-              <MenuBtn text="ویدیو ها"></MenuBtn>
+            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/userCourse"}>
+              <MenuBtn  text="ویدیو ها"></MenuBtn>
             </Link>
 
-            <Link className="w-full" href={"/userPannle/cashwithdrawal"}>
+            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/cashwithdrawal"}>
               <MenuBtn text="برداشت وجه"></MenuBtn>
             </Link>
-            <Link className="w-full" href={"/userPannle/ticket"}>
+            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/ticket"}>
               <MenuBtn text="تیکت ها"></MenuBtn>
             </Link>
 
-            <Link className="w-full" href={"/userPannle/Contactus"}>
+            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/Contactus"}>
               <MenuBtn text="ارتباط با ما"></MenuBtn>
             </Link>
-            <Link className="w-full" href={"/userPannle/user"}>
+            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/user"}>
               <MenuBtn text="تنظیمات کاربری"></MenuBtn>
             </Link>
-            <div onClick={handlepopop} className="w-full">
+            <div onClick={() => { handlepopop(); Menuhandler(); }} className="w-full">
               {" "}
               {/*handleRemoveCookie */}
               <MenuBtn text="خروچ از حساب"></MenuBtn>

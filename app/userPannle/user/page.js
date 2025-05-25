@@ -1,18 +1,19 @@
-"use client"
-import { useState } from 'react'
-import axios from 'axios'
-import apiKey from '@/app/API'
-import { useRouter } from 'next/navigation'
-import { useLoginCheck } from '@/app/myhook/cookiesHook'
+"use client";
+import { useState } from "react";
+import axios from "axios";
+import apiKey from "@/app/API";
+import { useRouter } from "next/navigation";
+import { useLoginCheck } from "@/app/myhook/cookiesHook";
+import imageCompression from "browser-image-compression";
 
 export default function ProfileForm() {
   const { getCookieSafe } = useLoginCheck();
   const loginCookie = getCookieSafe("login");
 
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    profileImage: ''
+    firstName: "",
+    lastName: "",
+    profileImage: "",
   });
 
   const [isLoading, setIsLoading] = useState(false);
@@ -20,30 +21,47 @@ export default function ProfileForm() {
   if (!loginCookie) return null;
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
-    setFormData(prev => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0]
-    if (!file) return
+  const handleFileChange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
 
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setFormData(prev => ({ ...prev, profileImage: reader.result }))
+    try {
+      const options = {
+        maxSizeMB: 0.2, // حجم هدف حدود 200KB
+        maxWidthOrHeight: 600,
+        useWebWorker: true,
+      };
+
+      const compressedFile = await imageCompression(file, options);
+
+      const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
+      setFormData((prev) => ({ ...prev, profileImage: base64 }));
+    } catch (err) {
+      console.error("خطا در فشرده‌سازی عکس:", err);
+      alert("خطا در فشرده‌سازی عکس");
     }
-    reader.readAsDataURL(file)
-  }
+  };
 
-  const router = useRouter()
+  const router = useRouter();
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     setIsLoading(true);
+
+    // بررسی طول رشته‌ی Base64 (مثلاً اگر بالای 1 مگابایت باشه)
+    if (formData.profileImage && formData.profileImage.length > 1_000_000) {
+      alert("حجم عکس خیلی زیاده. لطفاً عکس سبک‌تری انتخاب کنید.");
+      setIsLoading(false);
+      return;
+    }
 
     const updatedData = {
       name: formData.firstName,
-      lastname: formData.lastName
+      lastname: formData.lastName,
     };
 
     if (formData.profileImage) {
@@ -53,17 +71,21 @@ export default function ProfileForm() {
     try {
       await axios.put(`${apiKey.putuser}/${loginCookie}`, updatedData, {
         headers: {
-          'Content-Type': 'application/json',
-        }
+          "Content-Type": "application/json",
+        },
       });
       router.push("/userPannle");
     } catch (error) {
-      alert('خطایی رخ داده است!')
-      console.error(error)
+      await axios.put(`${apiKey.putuser}/${loginCookie}`, updatedData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      router.push("/userPannle");
     } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   return (
     <>
@@ -85,12 +107,16 @@ export default function ProfileForm() {
 
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-tr p-4">
         <div className="w-full max-w-lg bg-white shadow-lg rounded-xl p-8 space-y-6">
-          <h2 className="text-3xl font-bold text-center text-indigo-600">ویرایش پروفایل</h2>
+          <h2 className="text-3xl font-bold text-center text-indigo-600">
+            ویرایش پروفایل
+          </h2>
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="flex flex-col md:flex-row md:space-x-4 space-y-4 md:space-y-0">
               <div className="w-full">
-                <label className="block text-gray-700 font-medium mb-1">نام</label>
+                <label className="block text-gray-700 font-medium mb-1">
+                  نام
+                </label>
                 <input
                   type="text"
                   name="firstName"
@@ -103,7 +129,9 @@ export default function ProfileForm() {
                 />
               </div>
               <div className="w-full">
-                <label className="block text-gray-700 font-medium mb-1">نام خانوادگی</label>
+                <label className="block text-gray-700 font-medium mb-1">
+                  نام خانوادگی
+                </label>
                 <input
                   type="text"
                   name="lastName"
@@ -118,7 +146,9 @@ export default function ProfileForm() {
             </div>
 
             <div className="flex flex-col space-y-2">
-              <label className="block text-gray-700 font-medium">عکس پروفایل</label>
+              <label className="block text-gray-700 font-medium">
+                عکس پروفایل
+              </label>
               <div className="relative w-full">
                 <input
                   type="file"
@@ -131,12 +161,18 @@ export default function ProfileForm() {
                 <label
                   htmlFor="profileImageInput"
                   className={`cursor-pointer inline-flex items-center justify-center px-4 py-2 rounded-md border border-indigo-300 transition duration-200
-                    ${isLoading ? 'bg-gray-200 text-gray-500 cursor-not-allowed' : 'bg-indigo-100 hover:bg-indigo-200 text-indigo-700'}`}
+                    ${
+                      isLoading
+                        ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                        : "bg-indigo-100 hover:bg-indigo-200 text-indigo-700"
+                    }`}
                 >
                   انتخاب عکس
                 </label>
                 {formData.profileImage && (
-                  <p className="mt-2 text-sm text-green-600">عکس انتخاب شد ✅</p>
+                  <p className="mt-2 text-sm text-green-600">
+                    عکس انتخاب شد ✅
+                  </p>
                 )}
               </div>
             </div>
@@ -150,18 +186,28 @@ export default function ProfileForm() {
                 />
               </div>
             )}
+            {formData.profileImage.length > 1_000_000 && (
+              <p className="text-red-600 text-sm text-center mt-2">
+                حجم عکس بیش از حد مجازه. لطفاً عکس سبک‌تری انتخاب کنید.
+              </p>
+            )}
 
             <button
               type="submit"
               className={`w-full py-2 px-4 rounded-lg font-semibold transition duration-200
-                ${isLoading ? 'bg-indigo-400 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700 text-white'}`}
-              disabled={isLoading}
+                ${
+                  isLoading
+                    ? "bg-indigo-400 cursor-not-allowed"
+                    : "bg-indigo-600 hover:bg-indigo-700 text-white"
+                }`}
+                disabled={isLoading || (formData.profileImage.length > 1_000_000)}
+
             >
-              {isLoading ? <div className="spinner" /> : 'ارسال اطلاعات'}
+              {isLoading ? <div className="spinner" /> : "ارسال اطلاعات"}
             </button>
           </form>
         </div>
       </div>
     </>
-  )
+  );
 }
