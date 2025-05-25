@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
 
-export default function page() {
+export default function loginPage() {
   const router = useRouter();
   const getCookie = useCallback((name) => {
     return Cookies.get(name) || null;

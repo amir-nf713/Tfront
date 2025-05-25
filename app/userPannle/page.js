@@ -14,13 +14,33 @@ export default function UserProfile() {
   }, []);
   const loginCookieValue = getCookie("login");
   const router = useRouter();
-
+const [loading, setLoading] = useState(true);
   // const { getCookieSafe } = useLoginCheck();
 
   // const loginCookie = getCookieSafe("login");
   // if (!loginCookie) return null; // تا وقتی ریدایرکت نشده، چیزی نشون نده
+   const [user, setUser] = useState(null);
+    useEffect(() => {
+    const fetchUserData = async () => {
+      if (!loginCookieValue) return;
+      try {
+        const response = await axios.get(
+          `${apiKey.getuserbyid}/${loginCookieValue}`
+        );
+        setUser(response.data.data);
+        if (response.data.data.name === "unknown") {
+          router.push("/userPannle/user");
+        }
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
   
-  const [user, setUser] = useState(null);
+    fetchUserData();
+  }, [loginCookieValue]);
+  
   const [USD, setUSD] = useState(null);
   const [EUR, seEUR] = useState(null);
   const [ticket, setticket] = useState([]);
@@ -32,7 +52,7 @@ export default function UserProfile() {
   const [ticketU, setticketU] = useState("");
   const [ticketUtextcolor, setticketUtextcolor] = useState("");
   const [ticketUbgcolor, setticketUbgcolor] = useState("");
-  const [loading, setLoading] = useState(true);
+  
   // const router = useRouter();
   const calculateUserAge = useCallback((createdDate) => {
     if (!createdDate) return "نامشخص";
@@ -68,27 +88,8 @@ export default function UserProfile() {
 
   
 
-  useEffect(() => {
-    const fetchUserData = async () => {
-      // const loginCookieValue = getCookie("login");
-      if (!loginCookieValue) return;
-      try {
-        const response = await axios.get(
-          `${apiKey.getuserbyid}/${loginCookieValue}`
-        );
-        setUser(response.data.data);
-        if (response.data.data.name === "unknown") {
-          router.push("/userPannle/user");
-        }
-      } catch (error) {
-        console.error("Error fetching user data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
 
-    fetchUserData();
-  }, [getCookie]);
+  
 
   const price = () => {
     
