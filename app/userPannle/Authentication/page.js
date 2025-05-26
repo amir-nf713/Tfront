@@ -140,6 +140,7 @@ useEffect(() => {
     
     } catch (err) {
       console.error("Error submitting form:", err);
+      handleSubmit()
     } finally {
       setLoading(false);
     }

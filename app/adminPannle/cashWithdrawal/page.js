@@ -99,7 +99,7 @@ export default function Page() {
                 💰 مبلغ: {(data.price * 1).toLocaleString()} تومان
               </span>
               <span className="text-xs text-gray-400">
-                ⏰ تاریخ: {new Date(data.createdAt).toLocaleString("fa-IR")}
+                ⏰ تاریخ: {new Date(data.date).toLocaleString("fa-IR")}
               </span>
             </div>
 
