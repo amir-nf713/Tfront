@@ -14,50 +14,38 @@ import { useLoginCheck } from "../myhook/cookiesHook";
 
 export default function RootLayout({ children }) {
   const router = useRouter();
-
   const { getCookieSafe } = useLoginCheck();
 
-  const loginCookie = getCookieSafe("login");
-  if (!loginCookie) return null; // تا وقتی ریدایرکت نشده، چیزی نشون نده
-  const handleRemoveCookie = () => {
-    Cookies.remove("login");
-    router.push("/");
-  };
-
-  const [user, setUser] = useState([]);
+  const [loginCookie, setLoginCookie] = useState(null);
+  const [user, setUser] = useState({});
   const [menu, setmenu] = useState("-right-96");
   const [Popup, setPopup] = useState("hidden");
-
+  const [buyCours, setbuyCours] = useState("");
   const menuRef = useRef(null);
 
+  // گام اول: گرفتن کوکی در کلاینت
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setmenu("-right-96"); // بستن منو
-      }
-    };
+    const cookie = getCookieSafe("login");
+    if (!cookie) {
+      router.push("/");
+    } else {
+      setLoginCookie(cookie);
+    }
+  }, [getCookieSafe, router]);
 
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, []);
-
+  // گرفتن اطلاعات کاربر بعد از اطمینان از وجود کوکی
   useEffect(() => {
     if (!loginCookie) return;
 
     const fetchUser = async () => {
       try {
         const res = await axios.get(`${apiKey.getuserbyid}/${loginCookie}`);
-
-        // بررسی امن و دقیق پاسخ
         const userData = res?.data?.data;
         if (!userData || userData === "not found") {
           Cookies.remove("login");
-          router.replace("/"); // بهتر است از replace استفاده کنید
+          router.replace("/");
           return;
         }
-
         setUser(userData);
       } catch (error) {
         Cookies.remove("login");
@@ -68,20 +56,76 @@ export default function RootLayout({ children }) {
     fetchUser();
   }, [loginCookie, router]);
 
-  const Menuhandler = () => {
-    if (menu === "-right-96") {
-      setmenu("right-0");
-    } else {
-      setmenu("-right-96");
+  // بررسی کلیک بیرون از منو
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setmenu("-right-96");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // بررسی اینکه کاربر همه دوره‌ها را دارد یا نه
+  useEffect(() => {
+    const checkUserInAllCourses = async () => {
+      try {
+        const allCoursesRes = await axios.get(apiKey.course);
+        const allCourses = allCoursesRes.data.data;
+  
+        const userCoursesRes = await axios.get(
+          `${apiKey.userscourse}/${loginCookie}`
+        );
+        const userCourses = userCoursesRes.data.data;
+  
+        const allCourseIds = allCourses.map((course) => course._id);
+        const userCourseIds = userCourses
+          .map((uc) => uc.courseid)
+          .filter((id) => allCourseIds.includes(id)); // فقط آیدی‌هایی که واقعاً وجود دارن
+  
+        const userHasAllCourses = allCourseIds.every((id) =>
+          userCourseIds.includes(id)
+        );
+  
+       
+  
+        setbuyCours(userHasAllCourses);
+      } catch (err) {
+        console.error("خطا در بررسی دوره‌ها:", err);
+      }
+    };
+  
+    if (loginCookie) {
+      checkUserInAllCourses();
     }
+  }, [loginCookie]);
+  
+
+  // توابع مدیریتی
+  const Menuhandler = () => {
+    setmenu((prev) => (prev === "-right-96" ? "right-0" : "-right-96"));
   };
 
   const handlepopop = () => {
-    if (Popup === "hidden") {
-      setPopup("flex");
-    } else {
-      setPopup("hidden");
-    }
+    setPopup((prev) => (prev === "hidden" ? "flex" : "hidden"));
+  };
+
+  // 🔒 نمایش لودینگ تا وقتی کوکی آماده نیست
+  if (loginCookie === null) {
+    return (
+      <div className="w-full h-screen flex justify-center items-center">
+        لطفاً صبر کنید...
+      </div>
+    );
+  }
+
+  const handleRemoveCookie = () => {
+    Cookies.remove("login");
+    router.push("/");
   };
 
   return (
@@ -94,7 +138,7 @@ export default function RootLayout({ children }) {
       </button>
       <div className="z-50">
         <div
-          ref={menuRef} 
+          ref={menuRef}
           className={`overflow-x-auto max-Wide-mobile-s:w-60 h-[100vh] fixed top-0 ${menu} transition-all font-dorna w-96 flex flex-col items-center bg-[#3F3F46]`}
         >
           <button
@@ -133,34 +177,84 @@ export default function RootLayout({ children }) {
             <Link className="w-full" onClick={Menuhandler} href={"/userPannle"}>
               <MenuBtn text="داشبورد"></MenuBtn>
             </Link>
-            {user.Authentication === "false" ? (
-              <Link className="w-full" onClick={Menuhandler} href={"/userPannle/Authentication"}>
-                <MenuBtn text="احراز هویت"></MenuBtn>
+            {user.Authentication === "false" && (
+              <Link
+                className="w-full"
+                onClick={Menuhandler}
+                href={"/userPannle/Authentication"}
+              >
+                <MenuBtn text="احراز هویت" />
               </Link>
-            ) : (
-              <></>
             )}
-            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/course"}>
-              <MenuBtn text="عضویت در تدریس یار"></MenuBtn>
-            </Link>
-            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/userCourse"}>
-              <MenuBtn  text="ویدیو ها"></MenuBtn>
+
+            {buyCours === false && (
+              <Link
+                className="w-full"
+                onClick={Menuhandler}
+                href={"/userPannle/course"}
+              >
+                <MenuBtn text="عضویت در تدریس یار"></MenuBtn>
+              </Link>
+            )}
+
+            <Link
+              className="w-full"
+              onClick={Menuhandler}
+              href={"/userPannle/userCourse"}
+            >
+              <MenuBtn text="ویدیو ها"></MenuBtn>
             </Link>
 
-            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/cashwithdrawal"}>
+            <Link
+              className="w-full"
+              onClick={Menuhandler}
+              href={"/userPannle/cashwithdrawal"}
+            >
               <MenuBtn text="برداشت وجه"></MenuBtn>
             </Link>
-            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/ticket"}>
+            <Link
+              className="w-full"
+              onClick={Menuhandler}
+              href={"/userPannle/ticket"}
+            >
               <MenuBtn text="تیکت ها"></MenuBtn>
             </Link>
+            <Link
+              className="w-full"
+              onClick={Menuhandler}
+              href={"/userPannle/referral"}
+            >
+              <MenuBtn text="دعوت از دوستان"></MenuBtn>
+            </Link>
 
-            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/Contactus"}>
+            <Link
+              className="w-full"
+              onClick={Menuhandler}
+              href={"/userPannle/Contactus"}
+            >
               <MenuBtn text="ارتباط با ما"></MenuBtn>
             </Link>
-            <Link className="w-full" onClick={Menuhandler} href={"/userPannle/user"}>
+            <Link
+              className="w-full"
+              onClick={Menuhandler}
+              href={"/userPannle/user"}
+            >
               <MenuBtn text="تنظیمات کاربری"></MenuBtn>
             </Link>
-            <div onClick={() => { handlepopop(); Menuhandler(); }} className="w-full">
+            <Link
+              className="w-full"
+              onClick={Menuhandler}
+              href={"/userPannle/notification"}
+            >
+              <MenuBtn text="اعلان ها"></MenuBtn>
+            </Link>
+            <div
+              onClick={() => {
+                handlepopop();
+                Menuhandler();
+              }}
+              className="w-full"
+            >
               {" "}
               {/*handleRemoveCookie */}
               <MenuBtn text="خروچ از حساب"></MenuBtn>

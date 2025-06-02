@@ -14,12 +14,13 @@ const apiKey = ({
   getcode : `${Url}/getcode`,
   tickettext : `${Url}/tickettext`,
   putuser : `${Url}/putuser`, // id
-  adminsendsms : `${Url}//admin/sendsms`, // id
+  adminsendsms : `${Url}/admin/sendsms`, // id
   adminlogin : `${Url}/admin/login`, // id
   deletuser : `${Url}/deletuser`, // id
-  usd : `${Url}/usd`, // id
-  eur : `${Url}/eur`, // id
+  usd : `${Url}/usd`, 
+  eur : `${Url}/eur`, 
   pay : `${Url}/pay`, // id
+  Notification : `${Url}/send/notification`, 
   
 });
 

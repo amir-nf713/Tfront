@@ -8,11 +8,11 @@ export default function CorseBox(props) {
           <img
             src={props.image}
             alt={props.title}
-            className=" object-cover"
+            className=" object-cover rounded-xl w-full h-60"
           />
-          <div className="p-4">
+          <div className="p-4 w-full">
             <h3 className="font-bold max-Wide-mobile-xs:text-sm text-lg text-gray-800 mb-1">{props.title}</h3>
-            <p className="text-sm max-Wide-mobile-xs:text-xs text-gray-600 leading-relaxed line-clamp-2">
+            <p className="text-sm max-Wide-mobile-xs:text-xs text-gray-600 leading-relaxed line-clamp-1">
               {props.description}
             </p>
     

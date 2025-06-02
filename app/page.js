@@ -1,12 +1,16 @@
 "use client";
 import axios from "axios";
-import React, { useCallback, useState } from "react";
+import React, { Suspense, useCallback, useState } from "react";
 import apiKey from "./API";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 import Cookies from "js-cookie";
 
-export default function loginPage() {
+ function LoginPage() {
+  const searchParams = useSearchParams()
+  const ref = searchParams.get('/ref')
+  console.log(ref);
+  
   const router = useRouter();
   const getCookie = useCallback((name) => {
     return Cookies.get(name) || null;
@@ -22,6 +26,7 @@ export default function loginPage() {
   const [codeBox, setCodeBox] = useState("hidden");
   const [NumBox, setNumBox] = useState("flex");
   const [numinp, setnuminp] = useState("");
+  const [numinp2, setnuminp2] = useState("");
   const [codeinp, setcodeinp] = useState("");
   const [err, seterr] = useState("");
   const [errsendCode, seterrsendCode] = useState("ارسال");
@@ -34,11 +39,13 @@ export default function loginPage() {
 
   const buttonhandler = () => {
     setloading(true);
-    if (numinp === "9216069232") {
+    let cleanedNumber = numinp.startsWith("0") ? numinp.slice(1) : numinp;
+  
+    if (cleanedNumber === "9216069232") {
       router.push("/adminPannle");
     } else {
       axios
-        .post(`${apiKey.sendsms}/+98${numinp}`)
+        .post(`${apiKey.sendsms}/+98${cleanedNumber}`)
         .then((data) => {
           console.log(data);
 
@@ -46,7 +53,8 @@ export default function loginPage() {
             if (codeBox === "hidden") {
               setCodeBox("flex");
               setNumBox("hidden");
-              setloading(false);
+              setloading(true);
+              
             }
           }
           if (
@@ -69,29 +77,32 @@ export default function loginPage() {
   };
 
   const inphanler = (e) => {
-    setnuminp(e.target.value);
-    if (numinp.length >= 9) {
-      setloading(false);
-    } else {
-      setloading(true);
-    }
+    const value = e.target.value;
+    setnuminp(value);
+    setloading(value.trim().length < 11); // مثلاً شماره باید ۹ رقم باشه
   };
-
+  const inphanler2 = (e) => {
+    const value = e.target.value;
+    setnuminp2(value);
+   
+  };
+  
   const codeinphandler = (e) => {
-    setcodeinp(e.target.value);
-    if (codeinp.length >= 2) {
-      setloading(false);
-    } else {
-      setloading(true);
-    }
+    const value = e.target.value;
+    setcodeinp(value);
+    setloading(value.trim().length < 2); // مثلاً کد باید حداقل ۴ رقم باشه
   };
+  
 
   const loginhanler = () => {
+
     setLoginLoading(true); // ✅ شروع لودینگ
+    let cleanedNumber = numinp.startsWith("0") ? numinp.slice(1) : numinp;
     axios
       .post(apiKey.login, {
-        number: Number("98" + numinp),
+        number: Number("98" + cleanedNumber),
         code: codeinp,
+        referralFrom: numinp2
       })
       .then((data) => {
         if (data.data.message === "ok" || data.data.login === "true") {
@@ -121,7 +132,7 @@ export default function loginPage() {
         <div
           className={`w-full ${NumBox} justify-center items-center flex-col`}
         >
-          <div className="w-[90%] ">
+          <div className="w-[97%]">
             <p className="font-extrabold text-2xl max-mobile-xlk:text-xl">
               ورود | ثبت نام
             </p>
@@ -129,22 +140,24 @@ export default function loginPage() {
               برای ورود یا ثبت نام شماره موبایل خود را وارد کنید
             </p>
           </div>
-          <div className="w-full flex justify-center items-center flex-row">
+          <div className="w-[97%] flex justify-center items-center flex-col gap-2.5">
+            <input
+              onChange={inphanler2}
+              value={numinp2}
+              placeholder="ایا کد دعوت دارید ؟"
+              type="text"
+              className=" w-full border-2 rounded-md px-2 text-gray-400 text-sm font-extrabold h-12 border-gray-200"
+            />
             <input
               onChange={inphanler}
               value={numinp}
-              placeholder="شماره را بدون صفر وارد کنید"
+              placeholder="شماره خود را وارد کنید"
               type="text"
-              className="mr-1.5  rounded-l-none border-l-0 font-sans w-[83%] ltr border-2 rounded-md px-2 text-gray-500 text-xl font-extrabold h-12 border-gray-300"
+              className=" w-full border-2 rounded-md px-2 text-gray-500 text-sm font-extrabold h-12 border-gray-300"
             />
-            <div className="h-12 ml-1.5 font-extrabold flex justify-center items-center w-12 font-sans rounded-r-none ltr border-2 rounded-md px-2 text-gray-500 border-gray-300">
-              +98
-            </div>
+            
           </div>
-          <p className="font-light max-Wide-mobile-s:text-xs text-sm text-red-500 text-start w-[90%] pt-2">
-            {" "}
-            - شماره را بدون صفر وارد کنید : 0000-000-900
-          </p>
+         
         </div>
 
         <div
@@ -194,5 +207,14 @@ export default function loginPage() {
         </button>
       </div>
     </div>
+  );
+}
+
+
+export default function Pdage() {
+  return (
+    <Suspense fallback={<div>در حال بارگذاری...</div>}>
+      <LoginPage />
+    </Suspense>
   );
 }

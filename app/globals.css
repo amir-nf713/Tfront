@@ -22,7 +22,7 @@
 	--breakpoint-mobile-xlk : 381px;
 	--breakpoint-mobile-l : 325px;
 	--breakpoint-mobile-s : 245px;
-	/* --font-dorna: "Dorna" */
+	--font-dorna: "MyCustomFont"
 }
 
 
@@ -38,7 +38,7 @@ body{
 
 @font-face {
 	font-family: 'MyCustomFont';
-	src: url('./Fonts/Digi\ Rastin\ Bold.ttf') format('truetype');
+	src: url('./Fonts/YekanBakh-Regular.ttf') format('truetype');
 	font-weight: normal;
 	font-style: normal;
   }

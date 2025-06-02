@@ -3,7 +3,7 @@ import React from 'react';
 const ContactComponent = () => {
   const phoneNumber = '9216069232'; // شماره تلفن خود را وارد کنید
   const whatsappLink = `https://wa.me/+98${phoneNumber}`;
-  const telegramLink = `https://t.me/+98${phoneNumber}`;
+  const telegramLink = `https://t.me/Tadris_Yar2`;
 
   return (
     <div className="h-[100vh] flex justify-center items-center w-full">
@@ -13,6 +13,20 @@ const ContactComponent = () => {
 
       <div className="flex flex-col space-y-6">
         {/* شماره تلفن */}
+        <a
+          href={`tel:+989330273366`}
+          className="flex items-center justify-center space-x-3 text-gray-800 hover:text-blue-500 transition duration-300 py-3 px-6 rounded-full bg-gray-100 hover:bg-blue-100"
+        >
+          <span className="text-2xl">📞</span>
+          <span className="font-medium text-lg">0{phoneNumber}</span>
+        </a>
+        <a
+          href={`tel:+989136106608`}
+          className="flex items-center justify-center space-x-3 text-gray-800 hover:text-blue-500 transition duration-300 py-3 px-6 rounded-full bg-gray-100 hover:bg-blue-100"
+        >
+          <span className="text-2xl">📞</span>
+          <span className="font-medium text-lg">0{phoneNumber}</span>
+        </a>
         <a
           href={`tel:+98${phoneNumber}`}
           className="flex items-center justify-center space-x-3 text-gray-800 hover:text-blue-500 transition duration-300 py-3 px-6 rounded-full bg-gray-100 hover:bg-blue-100"

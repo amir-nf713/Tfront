@@ -81,6 +81,11 @@ function Page() {
       console.error("خطا در درخواست پرداخت:", error);
       setError("خطا در درخواست پرداخت. لطفاً مجدداً تلاش کنید.");
     }
+
+    // axios.post(apiKey.userscourse,{
+    //   userid: loginCookieValue,
+    //   courseid : id
+    // })
   };
   
   

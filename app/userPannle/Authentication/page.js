@@ -133,8 +133,9 @@ useEffect(() => {
       );
   
       setTimeout(() => {
-        router.push("/userPannle");
+        window.location.href = "/userPannle";
       }, 2000);
+      
       
       
     
