@@ -32,10 +32,10 @@ export default function WithdrawalPanel() {
           return itemDate === today;
         });
 
-        // if (todayRequest) {
-        //   seterrsendCode("شما امروز یکبار درخواست برداشت ثبت کرده‌اید.");
-        //   setbtndis(true);
-        // }
+        if (todayRequest) {
+          seterrsendCode("شما امروز یکبار درخواست برداشت ثبت کرده‌اید.");
+          setbtndis(true);
+        }
 
         setsendmoney(data.data.data.reverse());
       })
