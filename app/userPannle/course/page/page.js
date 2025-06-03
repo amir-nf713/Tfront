@@ -6,6 +6,7 @@ import React, { Suspense, useCallback, useEffect, useState } from "react";
 import { Star, Users } from "lucide-react";
 import Cookies from "js-cookie";
 import { MdKeyboardArrowLeft } from "react-icons/md";
+import { data } from "autoprefixer";
 
 function Page() {
   const [openIndex, setOpenIndex] = useState(null);
@@ -40,10 +41,10 @@ function Page() {
         setLoading(false);
       }
     };
-  
+
     if (id && loginCookieValue) fetchCourseAndUser();
   }, [id, loginCookieValue]);
-  
+
   useEffect(() => {
     const fetchVideos = async () => {
       try {
@@ -53,17 +54,14 @@ function Page() {
         console.error("خطا در دریافت ویدیوها:", err);
       }
     };
-  
+
     if (id) fetchVideos();
   }, [id]);
-  
 
   const hasBoughtCourse = userCourses.some(
     (item) => item.courseid == id && item.userid == loginCookieValue
   );
 
- 
-  
   const buyCourse = async () => {
     try {
       const response = await axios.post(apiKey.pay, {
@@ -71,7 +69,7 @@ function Page() {
         title: "تدریس یار",
         userId: loginCookieValue,
       });
-  
+
       if (response.data.url) {
         window.location.href = response.data.url;
       } else {
@@ -82,13 +80,24 @@ function Page() {
       setError("خطا در درخواست پرداخت. لطفاً مجدداً تلاش کنید.");
     }
 
+    // axios.get(`https://dash.tadrisyar.com/api/tadrisyar/getuser/${loginCookieValue}`).then((data) => {
+    //   axios
+    //     .get(`https://dash.tadrisyar.com/api/tadrisyar/getuser/ref${data.data.data.referralFrom}`)
+    //     .then((dataa) => {
+    //       axios.get(`https://dash.tadrisyar.com/api/tadrisyar/refset`).then((dataaa) => {
+    //         axios.put(`https://dash.tadrisyar.com/api/tadrisyar/putuser/${dataa.data.data._id}`, {
+    //           referralPrice:
+    //             dataa.data.data.referralPrice + dataaa.data.data.priceByCourse,
+    //         });
+    //       });
+    //     });
+    // });
+
     // axios.post(apiKey.userscourse,{
     //   userid: loginCookieValue,
     //   courseid : id
     // })
   };
-  
-  
 
   const toggleVideo = (index) => {
     if (hasBoughtCourse || index === 0) {
@@ -168,7 +177,9 @@ function Page() {
                   <div
                     onClick={() => toggleVideo(index)}
                     className={`flex justify-between items-center px-4 py-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 ${
-                      hasBoughtCourse || index === 0 ? "cursor-pointer" : "cursor-not-allowed"
+                      hasBoughtCourse || index === 0
+                        ? "cursor-pointer"
+                        : "cursor-not-allowed"
                     }`}
                   >
                     <div className="flex items-center gap-4">
@@ -180,14 +191,24 @@ function Page() {
                       </div>
                     </div>
                     <div className="flex flex-row">
-
-                    <div className={`${hasBoughtCourse || index === 0 ? "text-green-500" : "text-gray-400"}`}>{index === 0 ? " رایگان" : ""}</div>
-                    <MdKeyboardArrowLeft
-                      className={`text-2xl transition-transform ${
-                        openIndex === index ? "rotate-90" : ""
-                      } ${hasBoughtCourse || index === 0 ? "text-green-500" : "text-gray-400"}`}
-                    />
-                    
+                      <div
+                        className={`${
+                          hasBoughtCourse || index === 0
+                            ? "text-green-500"
+                            : "text-gray-400"
+                        }`}
+                      >
+                        {index === 0 ? " رایگان" : ""}
+                      </div>
+                      <MdKeyboardArrowLeft
+                        className={`text-2xl transition-transform ${
+                          openIndex === index ? "rotate-90" : ""
+                        } ${
+                          hasBoughtCourse || index === 0
+                            ? "text-green-500"
+                            : "text-gray-400"
+                        }`}
+                      />
                     </div>
                   </div>
 

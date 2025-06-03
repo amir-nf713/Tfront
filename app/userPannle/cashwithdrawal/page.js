@@ -26,22 +26,21 @@ export default function WithdrawalPanel() {
       .get(`${apiKey.withdrawalMoney}/${loginCookieValue}`)
       .then((data) => {
         const today = new Date().toISOString().split("T")[0]; // امروز
-  
+
         const todayRequest = data.data.data.find((item) => {
           const itemDate = item.date.split("T")[0];
           return itemDate === today;
         });
-  
-        if (todayRequest) {
-          seterrsendCode("شما امروز یکبار درخواست برداشت ثبت کرده‌اید.");
-          setbtndis(true);
-        }
-  
+
+        // if (todayRequest) {
+        //   seterrsendCode("شما امروز یکبار درخواست برداشت ثبت کرده‌اید.");
+        //   setbtndis(true);
+        // }
+
         setsendmoney(data.data.data.reverse());
       })
       .catch(() => {});
   }, [amount]);
-  
 
   const [user, setUser] = useState([]);
   useEffect(() => {
@@ -55,7 +54,6 @@ export default function WithdrawalPanel() {
 
   let randomCode = 0;
   const sendCode = async () => {
-  
     axios
       .post(`${apiKey.sendsms}/+${user.number}`)
       .then((data) => {
@@ -65,115 +63,120 @@ export default function WithdrawalPanel() {
           "You have reached the limit of requests (5 per 5 minutes)"
         ) {
           seterrsendCode("دسترسی شما تا دقایقی محدود شده");
-          setbtntext("ارسال شد")
-          setbtndisable(true)
-         
+          setbtntext("ارسال شد");
+          setbtndisable(true);
+
           setInterval(() => {
             seterrsendCode("");
-            setbtntext("ارسال کد")
-            setbtndisable(false)
+            setbtntext("ارسال کد");
+            setbtndisable(false);
           }, 120000);
-        }else{
-            setbtntext("ارسال شد")
-      setbtndisable(true)
-      setTimeout(() => {
-        setbtntext("ارسال کد")
-        setbtndisable(false)
-      }, 5000);
+        } else {
+          setbtntext("ارسال شد");
+          setbtndisable(true);
+          setTimeout(() => {
+            setbtntext("ارسال کد");
+            setbtndisable(false);
+          }, 5000);
         }
       })
       .catch((errr) => {});
-
-    
   };
 
   const handleWithdraw = async () => {
     try {
-      setbtndis(true)
+      setbtndis(true);
       const verifyRes = await axios.post(apiKey.getcode, {
         number: user.number,
         code: code,
       });
 
-      
-  
       if (verifyRes.data.massage === "ok") {
         const walletBalance = Number(user.wallet);
         const withdrawAmount = Number(amount);
-  
-        
-          // بروزرسانی کیف پول
-          await axios.put(`${apiKey.putuser}/${user._id}`, {
-            wallet: walletBalance + withdrawAmount,
-          });
-  
-          // ارسال درخواست برداشت وجه
-          await axios.post(apiKey.withdrawalMoney, {
-            price: withdrawAmount,
-            userid: loginCookieValue,
-            shaba: sheba,
-          });
-  
-          // موفقیت‌آمیز
-          setAmount("")
-          setSheba("")
-          setCode("")          
-          seterrsendCode("برداشت با موفقیت انجام شد ✅");
-          axios.post(
-            "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
-            {
-              code: "yq5ahxglr7dn071",
-              sender: "+983000505",
-              recipient: `+${user.number}`,
-              variable: {
-                name: `${user.name}`,
-              },
-            },
-            {
-              headers: {
-                accept: "application/json",
-                apikey:
-                  "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
-                "Content-Type": "application/json",
-              },
-            }
-          );
-          axios.post(
-            "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
-            {
-              code: "r0xkf7bqy8snwyl",
-              sender: "+983000505",
-              recipient: `+989216069232`,
-              variable: {
-                number: `${user.number}`,
-              },
-            },
-            {
-              headers: {
-                accept: "application/json",
-                apikey:
-                  "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
-                "Content-Type": "application/json",
-              },
-            }
-          );
 
-          
-     
-      
+        // بروزرسانی کیف پول
+        await axios.put(`${apiKey.putuser}/${user._id}`, {
+          wallet: walletBalance + withdrawAmount,
+        });
+
+        // ارسال درخواست برداشت وجه
+        await axios.post(apiKey.withdrawalMoney, {
+          price: withdrawAmount,
+          userid: loginCookieValue,
+          shaba: sheba,
+        });
+
+        // موفقیت‌آمیز
+        setAmount("");
+        setSheba("");
+        setCode("");
+
+        seterrsendCode("برداشت با موفقیت انجام شد ✅");
+
+        axios.get(`https://dash.tadrisyar.com/api/tadrisyar/getuser/${loginCookieValue}`).then((data) => {
+          axios
+            .get(`https://dash.tadrisyar.com/api/tadrisyar/getuser/ref/${data.data.data.referralFrom}`)
+            .then((dataa) => {
+              axios.get(`https://dash.tadrisyar.com/api/tadrisyar/refset`).then((dataaa) => {
+                axios.put(`https://dash.tadrisyar.com/api/tadrisyar/putuser/${dataa.data.data._id}`, {
+                  referralPrice:
+                    ((dataa.data.data.referralPrice) + (dataaa.data.data.priceWithroutMony)),
+                });
+              });
+            });
+        });
+
+        axios.post(
+          "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+          {
+            code: "yq5ahxglr7dn071",
+            sender: "+983000505",
+            recipient: `+${user.number}`,
+            variable: {
+              name: `${user.name}`,
+            },
+          },
+          {
+            headers: {
+              accept: "application/json",
+              apikey:
+                "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        axios.post(
+          "https://api2.ippanel.com/api/v1/sms/pattern/normal/send",
+          {
+            code: "r0xkf7bqy8snwyl",
+            sender: "+983000505",
+            recipient: `+989216069232`,
+            variable: {
+              number: `${user.number}`,
+            },
+          },
+          {
+            headers: {
+              accept: "application/json",
+              apikey:
+                "OWVlMTcwY2MtNDdlMy00NDI1LWE3NjAtYzA3OTljNDliMmNlMmVhNjA3ZjBiNzM3ZTQ2ZWFjYjRlZTQzMTk3YzI4ZDY=", // 👈 جایگزین کن با کلید واقعی خودت
+              "Content-Type": "application/json",
+            },
+          }
+        );
       } else {
         seterrsendCode("کد تأیید اشتباه است ❌");
       }
-      
+
       setTimeout(() => {
-        setbtndis(false)
+        setbtndis(false);
       }, 4000);
     } catch (error) {
       console.error("خطا در فرآیند برداشت:", error);
       seterrsendCode("خطا در ارتباط با سرور رخ داد ❌");
     }
   };
-  
 
   return (
     <div className="w-full min-h-screen bg-gray-100 flex justify-center items-center p-6">
@@ -254,7 +257,9 @@ export default function WithdrawalPanel() {
               <span className="text-gray-500 text-sm">
                 {data.date.split("T")[0]}
               </span>
-              <span className="text-sky-500 w-[30%] flex justify-end font-bold">{(data.price * 1).toLocaleString()}</span>
+              <span className="text-sky-500 w-[30%] flex justify-end font-bold">
+                {(data.price * 1).toLocaleString()}
+              </span>
             </div>
           ))}
         </div>

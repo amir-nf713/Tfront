@@ -14,6 +14,8 @@
     "autoprefixer": "^10.4.21",
     "axios": "^1.7.9",
     "browser-image-compression": "^2.0.2",
+    "dayjs": "^1.11.13",
+    "dayjs-jalali": "^0.0.2",
     "framer-motion": "^12.4.10",
     "js-cookie": "^3.0.5",
     "lucide-react": "^0.510.0",

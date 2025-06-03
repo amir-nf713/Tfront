@@ -22,6 +22,8 @@ const apiKey = ({
   eur : `${Url}/eur`, 
   pay : `${Url}/pay`, // id
   Notification : `${Url}/send/notification`, 
+  refset : `${Url}/refset`, 
+  getuserbyref : `${Url}/getuser/ref`, 
   
 });
 
